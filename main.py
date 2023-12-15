@@ -8,10 +8,8 @@ from avalanche.models import SimpleMLP
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
-from avalanche.evaluation import Metric
-from torch import nn
 from Continual_Calibration import Continual_Calibration
-from ECE_metrics import ECE_metrics
+from ECE_metrics import ExperienceECE
 from Ent_Loss import Ent_Loss
 
 if __name__ == "__main__":
@@ -40,7 +38,7 @@ if __name__ == "__main__":
     
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
-        ECE_metrics(),
+        ExperienceECE(),  # after training on each experience it computes ECE on each experience
         loggers=[interactive_logger, text_logger, tb_logger]
     )
     
