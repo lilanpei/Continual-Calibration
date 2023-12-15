@@ -1,4 +1,6 @@
 from torch import nn
+import torch
+
 
 class Ent_Loss(nn.Module):
     def __init__(self, ent_weight):
@@ -7,8 +9,8 @@ class Ent_Loss(nn.Module):
         self.ent_weight = ent_weight
 
     def forward(self, mb_output, mb_y):
-        entropy = 0 #th.distributions.Categorical(mb_output).entropy().mean()
-
-        ent_loss = -self.ent_weight * (entropy if entropy is not None else th.zeros(1))
-        loss = self.criterion(mb_output, mb_y) + self.ent_weight * entropy
-        return loss
+        cross_entropy = torch.nn.functional.cross_entropy(mb_output, mb_y)
+        probs = torch.softmax(mb_output, dim=-1)
+        log_probs = torch.log_softmax(mb_output, dim=-1)
+        entropy = -(probs * log_probs).sum(dim=-1).mean()
+        return cross_entropy - self.beta * entropy if self.active else cross_entropy
