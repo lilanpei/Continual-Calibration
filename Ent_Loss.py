@@ -13,4 +13,4 @@ class Ent_Loss(nn.Module):
         probs = torch.softmax(mb_output, dim=-1)
         log_probs = torch.log_softmax(mb_output, dim=-1)
         entropy = -(probs * log_probs).sum(dim=-1).mean()
-        return cross_entropy - self.beta * entropy if self.active else cross_entropy
+        return cross_entropy - self.beta * entropy
