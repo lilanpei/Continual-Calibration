@@ -49,7 +49,7 @@ class ECE(Metric[float]):
         ece = {}
 
         max_bin = self.bins[-1]
-        for min_bin in self.bins[:-1]:
+        for min_bin in reversed(self.bins[:-1]):
             mask = torch.logical_and(self.example_confidences <= max_bin, self.example_confidences > min_bin)
             n_examples = mask.sum().item()
             if n_examples > 0:
