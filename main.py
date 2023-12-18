@@ -9,7 +9,7 @@ from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
 from Continual_Calibration import Continual_Calibration
-from ECE_metrics import ExperienceECE
+from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
 
 if __name__ == "__main__":
@@ -105,6 +105,7 @@ if __name__ == "__main__":
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
         ExperienceECE(),  # after training on each experience it computes ECE on each experience
+        ExpECEHistogram(),
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
