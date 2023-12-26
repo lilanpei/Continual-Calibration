@@ -4,7 +4,7 @@ from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
 from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
-from avalanche.models import SimpleMLP
+from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
@@ -103,12 +103,11 @@ if __name__ == "__main__":
     foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
+        model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
     else:
         benchmark = SplitMNIST(n_experiences=5)
+        model = SimpleMLP(num_classes=benchmark.n_classes)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
-    model = SimpleMLP(num_classes=benchmark.n_classes)
-    # if args.post_processing_calibration_mode:
-    #     model = ModelWithTemperature(model)
     mem_size = args.mem_size
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
