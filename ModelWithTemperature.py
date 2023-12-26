@@ -17,7 +17,7 @@ class ModelWithTemperature(nn.Module):
     def __init__(self, model):
         super(ModelWithTemperature, self).__init__()
         self.model = model
-        self.temperature = nn.Parameter(th.ones(1) * 1.5)
+        self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 
     def forward(self, input):
         logits = self.model(input)
