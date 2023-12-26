@@ -104,9 +104,11 @@ if __name__ == "__main__":
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
+        model_name = "ResNet20"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
+        model_name = "SimpleMLP"
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
     mem_size = args.mem_size
     train_mb_size = args.train_mb_size
@@ -117,17 +119,24 @@ if __name__ == "__main__":
 
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
+        calibration_mode = "SelfTraining"
     else:
         criterion = CrossEntropyLoss()
+        calibration_mode = "NoSelfTraining"
     
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
 
+    if pp_calibration_mode:
+        calibration_mode = calibration_mode + "_" + "PostProcessing"
+    else:
+        calibration_mode = calibration_mode + "_" + "NoPostProcessing"
+
     # log to Tensorboard
-    tb_logger = TensorboardLogger()
+    tb_logger = TensorboardLogger(f'./logs/{args.dataset_name}_{model_name}_{calibration_mode}')
     # log to text file
-    text_logger = TextLogger(open('log.txt', 'a'))
+    text_logger = TextLogger(open(f'{args.dataset_name}_{model_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
     
