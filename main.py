@@ -77,6 +77,18 @@ if __name__ == "__main__":
         default="Naive",
         help="strategy name",
     )
+    parser.add_argument(
+        "-stcm",
+        "--self_training_calibration_mode",
+        help="self training calibration mode",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-ppcm",
+        "--post_processing_calibration_mode",
+        help="post processing calibration mode",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -85,16 +97,24 @@ if __name__ == "__main__":
     benchmark = SplitMNIST(n_experiences=5)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
     model = SimpleMLP(num_classes=benchmark.n_classes)
+    # if args.post_processing_calibration_mode:
+    #     model = ModelWithTemperature(model)
     mem_size = args.mem_size
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
     optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum)
     ent_weight = args.ent_weight
-    criterion = Ent_Loss(ent_weight)
+
+    if args.self_training_calibration_mode:
+        criterion = Ent_Loss(ent_weight)
+    else:
+        criterion = CrossEntropyLoss()
+    
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
-    
+    pp_calibration_mode = args.post_processing_calibration_mode
+
     # log to Tensorboard
     tb_logger = TensorboardLogger()
     # log to text file
@@ -109,5 +129,5 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device)
+    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
     continual_calibration.train()
