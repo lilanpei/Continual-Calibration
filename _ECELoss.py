@@ -1,7 +1,7 @@
 """Continual calibration via temperature scaling
 Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger
 On Calibration of Modern Neural Networks.
-Adapted from: https://github.com/bearpaw/pytorch-classification
+Adapted from: https://github.com/gpleiss/temperature_scaling
 """
 import torch as th
 from torch import nn
