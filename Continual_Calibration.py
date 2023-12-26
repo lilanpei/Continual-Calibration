@@ -84,20 +84,20 @@ class Continual_Calibration:
                     # train returns a dictionary which contains all the metric values
                     self.strategy.train(experience_tr)
                     print('Training completed')
+
                     if self.pp_calibration_mode:
                         self.model = ModelWithTemperature(self.model)
-                    print("%%%% before calibrate temperature", self.model.temperature.data)
-                    self.calibrate_temperature(experience_val)
-                    optimal_temperature = self.model.temperature
-                    print("%%%% after calibrate temperature", optimal_temperature.data)
+                        print("%%%% before calibrate temperature", self.model.temperature.data)
+                        self.calibrate_temperature(experience_val)
+                        optimal_temperature = self.model.temperature
+                        print("%%%% after calibrate temperature", optimal_temperature.data)
 
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
                     results.append(self.strategy.eval(self.benchmark.test_stream))
-                    self.model = self.model.model
-                    # self.model.temperature = nn.Parameter(th.ones(1))
-                    # self.temperature = nn.Parameter(th.ones(1) * 1.5)
-
+                    
+                    if self.pp_calibration_mode:
+                        self.model = self.model.model
 
             return results
 
