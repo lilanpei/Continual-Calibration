@@ -1,3 +1,8 @@
+"""Continual calibration via temperature scaling
+Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger
+On Calibration of Modern Neural Networks.
+Adapted from: https://github.com/bearpaw/pytorch-classification
+"""
 import torch as th
 from torch import nn, optim
 from torch.nn import functional as F
@@ -102,7 +107,6 @@ class Continual_Calibration:
             return results
 
     def calibrate_temperature(self, experience_val):
-
         """
         Tune the tempearature of the model (using the validation set).
         We're going to set it to optimize ExperienceECE.
