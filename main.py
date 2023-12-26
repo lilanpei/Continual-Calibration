@@ -2,7 +2,7 @@ import argparse
 import torch as th
 from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
-from avalanche.benchmarks.classic import SplitMNIST
+from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
@@ -78,6 +78,13 @@ if __name__ == "__main__":
         help="strategy name",
     )
     parser.add_argument(
+        "-dn",
+        "--dataset_name",
+        type=str,
+        default="SplitMNIST",
+        help="dataset name",
+    )
+    parser.add_argument(
         "-stcm",
         "--self_training_calibration_mode",
         help="self training calibration mode",
@@ -94,7 +101,10 @@ if __name__ == "__main__":
 
     validation_size = args.validation_size
     foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
-    benchmark = SplitMNIST(n_experiences=5)
+    if args.dataset_name == "SplitCIFAR100":
+        benchmark = SplitCIFAR100(n_experiences=10)
+    else:
+        benchmark = SplitMNIST(n_experiences=5)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
     model = SimpleMLP(num_classes=benchmark.n_classes)
     # if args.post_processing_calibration_mode:
