@@ -134,9 +134,9 @@ if __name__ == "__main__":
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
 
     # log to Tensorboard
-    tb_logger = TensorboardLogger(f'./logs/{args.dataset_name}_{model_name}_{calibration_mode}')
+    tb_logger = TensorboardLogger(f'./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
     # log to text file
-    text_logger = TextLogger(open(f'{args.dataset_name}_{model_name}_{calibration_mode}_log.txt', 'a'))
+    text_logger = TextLogger(open(f'{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
     
