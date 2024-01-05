@@ -7,9 +7,9 @@ from avalanche.models.base_model import BaseModel
 class DQNModel(nn.Module, BaseModel):
     def __init__(self, num_actions):
         super().__init__()
-        self.conv1 = nn.Conv2d(4, 32, kernel_size=8, stride=4, padding='same')
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2, padding='same')
-        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding='same')
+        self.conv1 = nn.Conv2d(4, 32, kernel_size=8, stride=4)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2)
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
         self.flatten = nn.Flatten()
         self.conv_out_size = self.__get_conv_out()
 

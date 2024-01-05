@@ -23,18 +23,18 @@ class AtariDataset(Dataset):
 
         self.actual_size = 0
         self.obs = []
-        self.actions = []
+        self.targets = []
         for i in range(size):
             if self.__check_valid_index(i):
                 self.actual_size += 1
                 self.obs.append(self.__get_stack('observation', i))
-                self.actions.append(self.data['action'][i])
+                self.targets.append(self.data['action'][i].long())
 
     def __len__(self):
         return len(self.obs)
     
     def __getitem__(self, index):
-        return self.obs[index], self.actions[index]
+        return self.obs[index], self.targets[index]
     
     def __load_data(self):
         data_dir = f'datasets/{self.game}/{self.data_idx}/replay_logs/'
@@ -91,14 +91,20 @@ def generate_atari_benchmark(n_experinces, data_idx=1, ckp_idx=49, dataset_size=
 
 
 if __name__ == "__main__":
-    dataset = AtariDataset('Atlantis', 1, 50, 100000)
+    dataset = AtariDataset('Atlantis', 1, 50, 10)
 
     train, test = random_split(dataset, [0.7, 0.3], th.Generator().manual_seed(1))
 
-    # for obs, action in dataset:
-    #     print("obs:", obs, obs.shape)
-    #     print("action:", action)
-    #     print("--------")
-    print("dataset_size:", len(dataset))
-    print("train_dataset_size:", len(train))
-    print("test_dataset_size:", len(test))
+    for obs, action in dataset:
+        print("obs:", obs, obs.shape, type(obs))
+        print("action:", action, type(action))
+        print("--------")
+
+    for obs, action in train:
+        print("obs:", obs, obs.shape, type(obs))
+        print("action:", action, type(action))
+        print("--------")
+
+    print("dataset_size:", len(dataset), type(dataset))
+    print("train_dataset_size:", len(train), type(train))
+    print("test_dataset_size:", len(test), type(test))
