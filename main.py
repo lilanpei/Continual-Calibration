@@ -11,6 +11,8 @@ from avalanche.benchmarks.generators import benchmark_with_validation_stream, cl
 from Continual_Calibration import Continual_Calibration
 from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
+from atari_dataset import generate_atari_benchmark
+from DQN_model import DQNModel
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -105,6 +107,10 @@ if __name__ == "__main__":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
         model_name = "ResNet20"
+    elif args.dataset_name == "Atari":
+        benchmark = generate_atari_benchmark(n_experinces=5)
+        model = DQNModel(num_actions=18)
+        model_name = "NatureDQNNetwork"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
@@ -124,7 +130,7 @@ if __name__ == "__main__":
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
     
-    device = th.device("cuda" if th.cuda.is_available() else "cpu")
+    device = th.device("cuda:3" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
 
