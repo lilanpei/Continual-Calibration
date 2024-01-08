@@ -38,6 +38,7 @@ class Continual_Calibration:
         self.eval_plugin = eval_plugin
         self.optimizer = optimizer
         self.criterion = criterion
+        print("@@@@@@@@@@", criterion, "@@@@@@@@@@")
         self.pp_calibration_mode = pp_calibration_mode
 
         if self.strategy_name == "JointTraining":
@@ -91,7 +92,7 @@ class Continual_Calibration:
                     print('Training completed')
 
                     if self.pp_calibration_mode:
-                        self.model = ModelWithTemperature(self.model)
+                        self.model = ModelWithTemperature(self.model, self.device)
                         print("%%%% before calibrate temperature", self.model.temperature.data)
                         self.calibrate_temperature(experience_val)
                         optimal_temperature = self.model.temperature
@@ -121,7 +122,7 @@ class Continual_Calibration:
         ece_metric = ECE()
         with th.no_grad():
             for input, label, _ in TaskBalancedDataLoader(experience_val.dataset):
-                logits = self.model(input).to(self.device)
+                logits = self.model(input.to(self.device)).to(self.device)
                 logits_list.append(logits)
                 labels_list.append(label)
             logits = th.cat(logits_list).to(self.device)

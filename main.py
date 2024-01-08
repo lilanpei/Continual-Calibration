@@ -105,8 +105,6 @@ if __name__ == "__main__":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.densenet("cifar100", depth=40, pretrained=False)
         model_name = "DenseNet40"
-        # model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
-        # model_name = "ResNet20"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
@@ -122,9 +120,11 @@ if __name__ == "__main__":
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
         calibration_mode = "SelfTraining"
+        print("########## SelfTraining ##########")
     else:
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
+        print("########## NoSelfTraining ##########")
     
     device = th.device("cuda" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
