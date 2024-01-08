@@ -105,8 +105,8 @@ if __name__ == "__main__":
     foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
-        model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
-        model_name = "ResNet20"
+        model = pytorchcv_wrapper.densenet("cifar100", depth=40, pretrained=False)
+        model_name = "DenseNet40"
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
@@ -126,9 +126,11 @@ if __name__ == "__main__":
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
         calibration_mode = "SelfTraining"
+        print("########## SelfTraining ##########")
     else:
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
+        print("########## NoSelfTraining ##########")
     
     device = th.device("cuda:3" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
