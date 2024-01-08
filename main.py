@@ -103,8 +103,10 @@ if __name__ == "__main__":
     foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
-        model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
-        model_name = "ResNet20"
+        model = pytorchcv_wrapper.densenet("cifar100", depth=40, pretrained=False)
+        model_name = "DenseNet40"
+        # model = pytorchcv_wrapper.resnet("cifar100", depth=20, pretrained=False)
+        # model_name = "ResNet20"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
