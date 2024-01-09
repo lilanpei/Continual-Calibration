@@ -1,5 +1,6 @@
 import argparse
 import torch as th
+import pickle
 from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
 from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
@@ -101,6 +102,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    th.set_num_threads(1)
+
     validation_size = args.validation_size
     foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
@@ -144,7 +147,7 @@ if __name__ == "__main__":
     # log to Tensorboard
     tb_logger = TensorboardLogger(f'./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
     # log to text file
-    text_logger = TextLogger(open(f'{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
+    text_logger = TextLogger(open(f'./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
     
@@ -155,5 +158,8 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
-    continual_calibration.train()
+    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, calibration_mode)
+    res = continual_calibration.train()
+
+    with open(f"./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
+        pickle.dump(res, file)
