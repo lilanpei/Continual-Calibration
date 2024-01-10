@@ -50,6 +50,8 @@ class Continual_Calibration:
                 self.criterion,
                 train_mb_size=self.train_mb_size,
                 train_epochs=self.train_epochs,
+                eval_mb_size=self.eval_mb_size,
+                evaluator=self.eval_plugin,
                 device=self.device
             )
         else:
