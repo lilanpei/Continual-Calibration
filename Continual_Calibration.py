@@ -26,7 +26,8 @@ class Continual_Calibration:
                  eval_plugin,
                  device,
                  pp_calibration_mode,
-                 calibration_mode_str
+                 calibration_mode_str,
+                 logdir
                  ):
         self.model = model
         self.strategy_name = strategy_name
@@ -42,6 +43,7 @@ class Continual_Calibration:
         print("@@@@@@@@@@", criterion, "@@@@@@@@@@")
         self.pp_calibration_mode = pp_calibration_mode
         self.calibration_mode_str = calibration_mode_str
+        self.log_dir = logdir
 
         if self.strategy_name == "JointTraining":
             self.strategy = JointTraining(
@@ -86,7 +88,7 @@ class Continual_Calibration:
             if self.strategy_name == "JointTraining":
                 self.strategy.train(self.benchmark.train_stream)
                 results.append(self.strategy.eval(self.benchmark.test_stream))
-                th.save(self.model.state_dict(), f"./logs/model_{self.strategy_name}.pt")
+                th.save(self.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}.pt")
             else:
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
                     print("Start of experience: ", experience_tr.current_experience)
@@ -110,7 +112,7 @@ class Continual_Calibration:
                     # store model after each experience
                     th.save(
                         self.model.state_dict(),
-                        f"./logs/model_{self.strategy_name}_{self.calibration_mode_str}_exp{experience_tr.current_experience}.pt"
+                        f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}_exp{experience_tr.current_experience}.pt"
                     )
 
                     if self.pp_calibration_mode:

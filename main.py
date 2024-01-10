@@ -99,6 +99,12 @@ if __name__ == "__main__":
         help="post processing calibration mode",
         action="store_true",
     )
+    parser.add_argument(
+        "-ld",
+        "--logdir",
+        type=str,
+        help="logging directory",
+    )
 
     args = parser.parse_args()
 
@@ -145,9 +151,9 @@ if __name__ == "__main__":
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
 
     # log to Tensorboard
-    tb_logger = TensorboardLogger(f'./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
+    tb_logger = TensorboardLogger(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
     # log to text file
-    text_logger = TextLogger(open(f'./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
+    text_logger = TextLogger(open(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
     
@@ -158,8 +164,8 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, calibration_mode)
+    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, calibration_mode, args.logdir)
     res = continual_calibration.train()
 
-    with open(f"./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
+    with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
         pickle.dump(res, file)
