@@ -7,10 +7,12 @@ import torch as th
 from torch import nn, optim
 from torch.nn import functional as F
 from avalanche.training.supervised import Naive, JointTraining, Replay
+from avalanche.benchmarks.utils import AvalancheDataset
 from avalanche.benchmarks.utils.data_loader import TaskBalancedDataLoader
 from ECE_metrics import ExperienceECE, ExpECEHistogram, ECE
 from ModelWithTemperature import ModelWithTemperature
 from _ECELoss import _ECELoss
+from typing import Iterable
 
 class Continual_Calibration:
     def __init__(self,
@@ -85,8 +87,28 @@ class Continual_Calibration:
     def train(self,):
             print('Starting experiment...')
             results = []
+            val_experiences_list = []
+            for exp in self.benchmark.valid_stream:
+                if isinstance(exp, Iterable):
+                    val_experiences_list.extend(exp.dataset)
+            else:
+                val_experiences_list.append(exp.dataset)
+            val_experiences_list = AvalancheDataset(val_experiences_list)
+
             if self.strategy_name == "JointTraining":
                 self.strategy.train(self.benchmark.train_stream)
+                print('Training completed')
+
+                if self.pp_calibration_mode:
+                    print('!!!!!!!! JointTraining calibration !!!!!!!')
+                    self.model = ModelWithTemperature(self.model, self.device)
+                    print("%%%% before calibrate temperature", self.model.temperature.data) 
+                    self.calibrate_temperature(val_experiences_list)
+                    optimal_temperature = self.model.temperature
+                    print("%%%% after calibrate temperature", optimal_temperature.data)
+
+                print('Computing accuracy on the whole test set')
+                # test also returns a dictionary which contains all the metric values
                 results.append(self.strategy.eval(self.benchmark.test_stream))
                 th.save(self.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}.pt")
             else:
@@ -101,7 +123,7 @@ class Continual_Calibration:
                     if self.pp_calibration_mode:
                         self.model = ModelWithTemperature(self.model, self.device)
                         print("%%%% before calibrate temperature", self.model.temperature.data)
-                        self.calibrate_temperature(experience_val)
+                        self.calibrate_temperature(experience_val.dataset)
                         optimal_temperature = self.model.temperature
                         print("%%%% after calibrate temperature", optimal_temperature.data)
 
@@ -134,7 +156,7 @@ class Continual_Calibration:
         ece_criterion = _ECELoss().to(self.device)
         ece_metric = ECE()
         with th.no_grad():
-            for input, label, _ in TaskBalancedDataLoader(experience_val.dataset):
+            for input, label, _ in TaskBalancedDataLoader(experience_val):
                 logits = self.model(input.to(self.device)).to(self.device)
                 logits_list.append(logits)
                 labels_list.append(label)
