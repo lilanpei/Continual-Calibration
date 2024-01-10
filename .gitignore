@@ -3,3 +3,4 @@ logs/
 .DS_Store
 .txt
 datasets/
+__pycache__/
