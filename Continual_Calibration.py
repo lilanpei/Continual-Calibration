@@ -20,6 +20,7 @@ class Continual_Calibration:
     def __init__(self,
                  model,
                  optimizer,
+                 sched,
                  criterion,
                  strategy_name,
                  benchmark,
@@ -54,6 +55,7 @@ class Continual_Calibration:
                 train_epochs=self.train_epochs,
                 eval_mb_size=self.eval_mb_size,
                 evaluator=self.eval_plugin,
+                plugins=[sched],
                 device=self.device
             )
         else:
@@ -67,6 +69,7 @@ class Continual_Calibration:
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
+                    plugins=[sched],
                     device=self.device
                     )
             else:
@@ -78,6 +81,7 @@ class Continual_Calibration:
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
+                    plugins=[sched],
                     device=self.device
                     )
 

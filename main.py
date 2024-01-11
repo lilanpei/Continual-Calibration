@@ -2,11 +2,13 @@ import argparse
 import torch as th
 from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
+from torch.optim.lr_scheduler import MultiStepLR
 from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
+from avalanche.training.plugins.lr_scheduling import LRSchedulerPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
 from Continual_Calibration import Continual_Calibration
 from ECE_metrics import ExperienceECE, ExpECEHistogram
@@ -103,8 +105,8 @@ if __name__ == "__main__":
     foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
-        model = pytorchcv_wrapper.densenet("cifar100", depth=40, pretrained=False)
-        model_name = "DenseNet40"
+        model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
+        model_name = "ResNet110"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
@@ -114,7 +116,10 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum)
+    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=5e-4)
+    sched = LRSchedulerPlugin(
+                MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.2) #learning rate decay
+            )
     ent_weight = args.ent_weight
 
     if args.self_training_calibration_mode:
@@ -149,5 +154,5 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
+    continual_calibration = Continual_Calibration(model, optimizer, sched, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
     continual_calibration.train()
