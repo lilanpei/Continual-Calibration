@@ -12,7 +12,6 @@ from avalanche.benchmarks.utils.data_attribute import ConstantSequence
 from avalanche.benchmarks.utils.data_loader import TaskBalancedDataLoader
 from ECE_metrics import ExperienceECE, ExpECEHistogram, ECE
 from ModelWithTemperature import ModelWithTemperature
-from _ECELoss import _ECELoss
 from typing import Iterable
 import numpy as np
 
