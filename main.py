@@ -172,6 +172,9 @@ if __name__ == "__main__":
     # print to stdout
     interactive_logger = InteractiveLogger()
     
+    # https://avalanche-api.continualai.org/en/v0.4.0/_modules/avalanche/training/plugins/early_stopping.html
+    # TODO: add evaluation on validation_stream after each epoch (how??) and apply early stopping to that metric
+
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
         ExperienceECE(),  # after training on each experience it computes ECE on each experience
