@@ -100,10 +100,22 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-ppdm",
+        "--post_processing_calibration_mixed_data",
+        help="post processing calibration with mixed data",
+        action="store_true",
+    )
+    parser.add_argument(
         "-ld",
         "--logdir",
         type=str,
         help="logging directory",
+    )
+    parser.add_argument(
+        "-cid",
+        "--cuda_id",
+        type=str,
+        help="cuda gpu index",
     )
 
     args = parser.parse_args()
@@ -141,12 +153,15 @@ if __name__ == "__main__":
         calibration_mode = "NoSelfTraining"
         print("########## NoSelfTraining ##########")
     
-    device = th.device("cuda:3" if th.cuda.is_available() else "cpu")
+    device = th.device(f"cuda:{args.cuda_id}" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
+    pp_cal_mixed_data = args.post_processing_calibration_mixed_data
 
     if pp_calibration_mode:
         calibration_mode = calibration_mode + "_" + "PostProcessing"
+        if pp_cal_mixed_data:
+            calibration_mode = calibration_mode + "_MixedData"
     else:
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
 
@@ -164,7 +179,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, calibration_mode, args.logdir)
+    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
