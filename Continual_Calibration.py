@@ -30,6 +30,7 @@ class Continual_Calibration:
                  eval_plugin,
                  device,
                  pp_calibration_mode,
+                 pp_cal_mixed_data,
                  calibration_mode_str,
                  logdir
                  ):
@@ -46,6 +47,7 @@ class Continual_Calibration:
         self.criterion = criterion
         print("@@@@@@@@@@", criterion, "@@@@@@@@@@")
         self.pp_calibration_mode = pp_calibration_mode
+        self.pp_cal_mixed_data = pp_cal_mixed_data
         self.calibration_mode_str = calibration_mode_str
         self.log_dir = logdir
 
@@ -126,8 +128,8 @@ class Continual_Calibration:
                     if self.pp_calibration_mode:
                         self.model = ModelWithTemperature(self.model, self.device)
                         print("%%%% before calibrate temperature", self.model.temperature.data)
-                        experience_val_data = make_classification_dataset(experience_val.dataset, task_labels=ConstantSequence(experience_val.task_label, len(experience_val.dataset)))
-                        if buffer_val:
+                        experience_val_data = make_classification_dataset(experience_val.dataset)
+                        if buffer_val and self.pp_cal_mixed_data:
                             buffer_length = len(buffer_val)
                             indices = list(range(buffer_length))
                             np.random.shuffle(indices)
