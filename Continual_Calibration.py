@@ -107,18 +107,6 @@ class Continual_Calibration:
                     print('!!!!!!!! JointTraining calibration !!!!!!!')
                     self.model = ModelWithTemperature(self.model, self.device)
                     print("%%%% before calibrate temperature", self.model.temperature.data)
-
-                    experience_val_data = make_classification_dataset(experience_val.dataset)
-                    if buffer_val and self.pp_cal_mixed_data:
-                        buffer_length = len(buffer_val)
-                        indices = list(range(buffer_length))
-                        np.random.shuffle(indices)
-                        val_split_index = int(np.floor(0.4 * buffer_length))
-                        new_buffer = AvalancheSubset(buffer_val, indices[:val_split_index])
-                        buffer_val = AvalancheConcatDataset([new_buffer, experience_val_data])
-                    else:
-                        buffer_val = experience_val_data
-
                     self.calibrate_temperature(val_experiences_list)
                     optimal_temperature = self.model.temperature
                     print("%%%% after calibrate temperature", optimal_temperature.data)
