@@ -154,5 +154,5 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, sched, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, sched, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
     continual_calibration.train()

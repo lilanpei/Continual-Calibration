@@ -18,6 +18,7 @@ import numpy as np
 
 class Continual_Calibration:
     def __init__(self,
+                tb_logger,
                  model,
                  optimizer,
                  sched,
@@ -32,6 +33,7 @@ class Continual_Calibration:
                  device,
                  pp_calibration_mode
                  ):
+        self.tb_logger = tb_logger
         self.model = model
         self.strategy_name = strategy_name
         self.benchmark = benchmark
@@ -104,10 +106,12 @@ class Continual_Calibration:
                 if self.pp_calibration_mode:
                     print('!!!!!!!! JointTraining calibration !!!!!!!')
                     self.model = ModelWithTemperature(self.model, self.device)
-                    print("%%%% before calibrate temperature", self.model.temperature.data) 
+                    print("%%%% before calibrate temperature", self.model.temperature.data)
+                    self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 0)
                     self.calibrate_temperature(val_experiences_list)
                     optimal_temperature = self.model.temperature
                     print("%%%% after calibrate temperature", optimal_temperature.data)
+                    self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 1)
 
                 print('Computing accuracy on the whole test set')
                 # test also returns a dictionary which contains all the metric values
@@ -175,6 +179,8 @@ class Continual_Calibration:
         ece_metric.update(logits, labels)
         before_temperature_ece_metric = ece_metric.result()
         print('##### Before temperature - NLL: %.3f, ECE: %.3f' % (before_temperature_nll, before_temperature_ece_metric))
+        self.tb_logger.writer.add_scalar("NLL", before_temperature_nll, 0)
+        self.tb_logger.writer.add_scalar("ECE", before_temperature_ece_metric, 0)
         ece_metric.reset()
 
         def eval():
@@ -190,6 +196,8 @@ class Continual_Calibration:
         after_temperature_ece_metric = ece_metric.result()
         print('##### Optimal temperature: %.3f' % self.model.temperature.data)
         print('##### After temperature - NLL: %.3f, ECE: %.3f' % (after_temperature_nll, after_temperature_ece_metric))
+        self.tb_logger.writer.add_scalar("NLL", after_temperature_nll, 1)
+        self.tb_logger.writer.add_scalar("ECE", after_temperature_ece_metric, 1)
         ece_metric.reset()
 
         return self
