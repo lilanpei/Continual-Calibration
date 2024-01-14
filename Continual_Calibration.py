@@ -135,6 +135,7 @@ class Continual_Calibration:
                     if self.pp_calibration_mode:
                         self.model = ModelWithTemperature(self.model, self.device)
                         print("%%%% before calibrate temperature", self.model.temperature.data)
+                        self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 0)
 
                         experience_val_data = make_classification_dataset(experience_val.dataset)
                         if buffer_val and self.pp_cal_mixed_data:
@@ -151,11 +152,12 @@ class Continual_Calibration:
                         self.calibrate_temperature(buffer_val)
                         optimal_temperature = self.model.temperature
                         print("%%%% after calibrate temperature", optimal_temperature.data)
+                        self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 1)
 
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
                     results.append(self.strategy.eval(self.benchmark.test_stream))
-                    
+
                     if self.pp_calibration_mode:
                         self.model = self.model.model
 
@@ -180,7 +182,7 @@ class Continual_Calibration:
                 labels_list.append(label)
             logits = th.cat(logits_list).to(self.device)
             labels = th.cat(labels_list).to(self.device)
-        
+
         # Calculate NLL and ECE before temperature scaling
         before_temperature_nll = nll_criterion(logits, labels).item()
         ece_metric.update(logits, labels)
