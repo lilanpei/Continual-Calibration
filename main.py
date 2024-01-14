@@ -1,5 +1,6 @@
 import argparse
 import torch as th
+import pickle
 from torch.optim import SGD
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import MultiStepLR
@@ -98,6 +99,24 @@ if __name__ == "__main__":
         help="post processing calibration mode",
         action="store_true",
     )
+    parser.add_argument(
+        "-ppdm",
+        "--post_processing_calibration_mixed_data",
+        help="post processing calibration with mixed data",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-ld",
+        "--logdir",
+        type=str,
+        help="logging directory",
+    )
+    parser.add_argument(
+        "-cid",
+        "--cuda_id",
+        type=str,
+        help="cuda gpu index",
+    )
 
     args = parser.parse_args()
 
@@ -131,19 +150,22 @@ if __name__ == "__main__":
         calibration_mode = "NoSelfTraining"
         print("########## NoSelfTraining ##########")
     
-    device = th.device("cuda" if th.cuda.is_available() else "cpu")
+    device = th.device(f"cuda:{args.cuda_id}" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
+    pp_cal_mixed_data = args.post_processing_calibration_mixed_data
 
     if pp_calibration_mode:
         calibration_mode = calibration_mode + "_" + "PostProcessing"
+        if pp_cal_mixed_data:
+            calibration_mode = calibration_mode + "_MixedData"
     else:
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
 
     # log to Tensorboard
-    tb_logger = TensorboardLogger(f'./logs/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
+    tb_logger = TensorboardLogger(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
     # log to text file
-    text_logger = TextLogger(open(f'{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
+    text_logger = TextLogger(open(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
     
@@ -154,5 +176,8 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, sched, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode)
-    continual_calibration.train()
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, sched, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
+    res = continual_calibration.train()
+
+    with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
+        pickle.dump(res, file)
