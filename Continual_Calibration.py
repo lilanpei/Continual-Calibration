@@ -114,7 +114,7 @@ class Continual_Calibration:
                 print('Computing accuracy on the whole test set')
                 # test also returns a dictionary which contains all the metric values
                 results.append(self.strategy.eval(self.benchmark.test_stream))
-                th.save(self.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}.pt")
+                th.save(self.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
             else:
                 buffer_val = None
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
