@@ -18,8 +18,10 @@ import numpy as np
 
 class Continual_Calibration:
     def __init__(self,
+                 tb_logger,
                  model,
                  optimizer,
+                 plugins,
                  criterion,
                  strategy_name,
                  benchmark,
@@ -34,6 +36,7 @@ class Continual_Calibration:
                  calibration_mode_str,
                  logdir
                  ):
+        self.tb_logger = tb_logger
         self.model = model
         self.strategy_name = strategy_name
         self.benchmark = benchmark
@@ -60,6 +63,8 @@ class Continual_Calibration:
                 train_epochs=self.train_epochs,
                 eval_mb_size=self.eval_mb_size,
                 evaluator=self.eval_plugin,
+                plugins=plugins,
+                eval_every=1,
                 device=self.device
             )
         else:
@@ -73,6 +78,8 @@ class Continual_Calibration:
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
+                    plugins=plugins,
+                    eval_every=1,
                     device=self.device
                     )
             else:
@@ -84,6 +91,8 @@ class Continual_Calibration:
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
+                    plugins=plugins,
+                    eval_every=1,
                     device=self.device
                     )
 
@@ -100,16 +109,18 @@ class Continual_Calibration:
             val_experiences_list = AvalancheDataset(val_experiences_list)
 
             if self.strategy_name == "JointTraining":
-                self.strategy.train(self.benchmark.train_stream)
+                self.strategy.train(self.benchmark.train_stream, eval_streams=[self.benchmark.valid_stream])
                 print('Training completed')
 
                 if self.pp_calibration_mode:
                     print('!!!!!!!! JointTraining calibration !!!!!!!')
                     self.model = ModelWithTemperature(self.model, self.device)
                     print("%%%% before calibrate temperature", self.model.temperature.data)
+                    self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 0)
                     self.calibrate_temperature(val_experiences_list)
                     optimal_temperature = self.model.temperature
                     print("%%%% after calibrate temperature", optimal_temperature.data)
+                    self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 1)
 
                 print('Computing accuracy on the whole test set')
                 # test also returns a dictionary which contains all the metric values
@@ -122,12 +133,13 @@ class Continual_Calibration:
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
 
                     # train returns a dictionary which contains all the metric values
-                    self.strategy.train(experience_tr)
+                    self.strategy.train(experience_tr, eval_streams=[experience_val])
                     print('Training completed')
 
                     if self.pp_calibration_mode:
                         self.model = ModelWithTemperature(self.model, self.device)
                         print("%%%% before calibrate temperature", self.model.temperature.data)
+                        self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 0)
 
                         experience_val_data = make_classification_dataset(experience_val.dataset)
                         if buffer_val and self.pp_cal_mixed_data:
@@ -144,6 +156,7 @@ class Continual_Calibration:
                         self.calibrate_temperature(buffer_val)
                         optimal_temperature = self.model.temperature
                         print("%%%% after calibrate temperature", optimal_temperature.data)
+                        self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 1)
 
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
@@ -185,6 +198,8 @@ class Continual_Calibration:
         ece_metric.update(logits, labels)
         before_temperature_ece_metric = ece_metric.result()
         print('##### Before temperature - NLL: %.3f, ECE: %.3f' % (before_temperature_nll, before_temperature_ece_metric))
+        self.tb_logger.writer.add_scalar("NLL", before_temperature_nll, 0)
+        self.tb_logger.writer.add_scalar("ECE", before_temperature_ece_metric, 0)
         ece_metric.reset()
 
         def eval():
@@ -200,6 +215,8 @@ class Continual_Calibration:
         after_temperature_ece_metric = ece_metric.result()
         print('##### Optimal temperature: %.3f' % self.model.temperature.data)
         print('##### After temperature - NLL: %.3f, ECE: %.3f' % (after_temperature_nll, after_temperature_ece_metric))
+        self.tb_logger.writer.add_scalar("NLL", after_temperature_nll, 1)
+        self.tb_logger.writer.add_scalar("ECE", after_temperature_ece_metric, 1)
         ece_metric.reset()
 
         return self
