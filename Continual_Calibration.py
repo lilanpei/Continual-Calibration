@@ -67,6 +67,7 @@ class Continual_Calibration:
                 eval_mb_size=self.eval_mb_size,
                 evaluator=self.eval_plugin,
                 plugins=[sched, EarlyStoppingPlugin(self.patience, "valid_stream")],
+                eval_every=1,
                 device=self.device
             )
         else:
@@ -81,6 +82,7 @@ class Continual_Calibration:
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
                     plugins=[sched, EarlyStoppingPlugin(self.patience, "valid_stream")],
+                    eval_every=1,
                     device=self.device
                     )
             else:
@@ -93,6 +95,7 @@ class Continual_Calibration:
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
                     plugins=[sched, EarlyStoppingPlugin(self.patience, "valid_stream")],
+                    eval_every=1,
                     device=self.device
                     )
 
