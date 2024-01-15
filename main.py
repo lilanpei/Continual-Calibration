@@ -8,6 +8,7 @@ from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
+from avalanche.training.plugins.early_stopping import EarlyStoppingPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
 from Continual_Calibration import Continual_Calibration
 from ECE_metrics import ExperienceECE, ExpECEHistogram
@@ -115,15 +116,28 @@ if __name__ == "__main__":
         "-cid",
         "--cuda_id",
         type=str,
+        default="0",
         help="cuda gpu index",
+    )
+    parser.add_argument(
+        "-p",
+        "--patience",
+        type=int,
+        default=3,
+        help="Number of epochs to wait without generalization"
+        "improvements before stopping the training .",
+    )
+    parser.add_argument(
+        "-ep",
+        "--early_stopping",
+        help="Early stopping",
+        action="store_true",
     )
 
     args = parser.parse_args()
 
     th.set_num_threads(1)
 
-    validation_size = args.validation_size
-    foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.densenet("cifar100", depth=40, pretrained=False)
@@ -136,6 +150,9 @@ if __name__ == "__main__":
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
+
+    plugins = []
+    foo = lambda exp: class_balanced_split_strategy(args.validation_size, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
     mem_size = args.mem_size
     train_mb_size = args.train_mb_size
@@ -143,6 +160,10 @@ if __name__ == "__main__":
     eval_mb_size = args.eval_mb_size
     optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum)
     ent_weight = args.ent_weight
+
+    if args.early_stopping:
+        early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
+        plugins.append(early_stopping)
 
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
@@ -171,9 +192,6 @@ if __name__ == "__main__":
     text_logger = TextLogger(open(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
-    
-    # https://avalanche-api.continualai.org/en/v0.4.0/_modules/avalanche/training/plugins/early_stopping.html
-    # TODO: add evaluation on validation_stream after each epoch (how??) and apply early stopping to that metric
 
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
@@ -182,7 +200,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(model, optimizer, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
