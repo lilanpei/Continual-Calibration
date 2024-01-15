@@ -7,7 +7,6 @@ import torch as th
 from torch import nn, optim
 from torch.nn import functional as F
 from avalanche.training.supervised import Naive, JointTraining, Replay
-from avalanche.training.plugins.early_stopping import EarlyStoppingPlugin
 from avalanche.benchmarks.utils import make_classification_dataset, AvalancheDataset, AvalancheConcatDataset, AvalancheSubset
 from avalanche.benchmarks.utils.data_attribute import ConstantSequence
 from avalanche.benchmarks.utils.data_loader import TaskBalancedDataLoader
@@ -19,11 +18,10 @@ import numpy as np
 
 class Continual_Calibration:
     def __init__(self,
-                 patience,
                  tb_logger,
                  model,
                  optimizer,
-                 sched,
+                 plugins,
                  criterion,
                  strategy_name,
                  benchmark,
@@ -38,7 +36,6 @@ class Continual_Calibration:
                  calibration_mode_str,
                  logdir
                  ):
-        self.patience = patience
         self.tb_logger = tb_logger
         self.model = model
         self.strategy_name = strategy_name
@@ -66,7 +63,7 @@ class Continual_Calibration:
                 train_epochs=self.train_epochs,
                 eval_mb_size=self.eval_mb_size,
                 evaluator=self.eval_plugin,
-                plugins=[sched, EarlyStoppingPlugin(self.patience, "valid_stream")],
+                plugins=plugins,
                 eval_every=1,
                 device=self.device
             )
@@ -81,7 +78,7 @@ class Continual_Calibration:
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
-                    plugins=[sched, EarlyStoppingPlugin(self.patience, "valid_stream")],
+                    plugins=plugins,
                     eval_every=1,
                     device=self.device
                     )
@@ -94,7 +91,7 @@ class Continual_Calibration:
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,
-                    plugins=[sched, EarlyStoppingPlugin(self.patience, "valid_stream")],
+                    plugins=plugins,
                     eval_every=1,
                     device=self.device
                     )

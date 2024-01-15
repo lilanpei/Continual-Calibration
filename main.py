@@ -10,6 +10,7 @@ from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
 from avalanche.training.plugins.lr_scheduling import LRSchedulerPlugin
+from avalanche.training.plugins.early_stopping import EarlyStoppingPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
 from Continual_Calibration import Continual_Calibration
 from ECE_metrics import ExperienceECE, ExpECEHistogram
@@ -127,6 +128,13 @@ if __name__ == "__main__":
         "improvements before stopping the training .",
     )
 
+    parser.add_argument(
+        "-ep",
+        "--early_stopping",
+        help="Early stopping",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     if args.dataset_name == "SplitCIFAR100":
@@ -138,10 +146,10 @@ if __name__ == "__main__":
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
 
+    plugins = []
     bm = benchmark_with_validation_stream(benchmark,  input_stream = 'train',
                                      output_stream='valid', validation_size=args.validation_split)
     mem_size = args.mem_size
-    patience = args.patience
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
@@ -149,7 +157,11 @@ if __name__ == "__main__":
     sched = LRSchedulerPlugin(
                 MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.2) #learning rate decay
             )
+    plugins.append(sched)
     ent_weight = args.ent_weight
+    if args.early_stopping:
+        early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
+        plugins.append(early_stopping)
 
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
@@ -186,7 +198,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(patience, tb_logger, model, optimizer, sched, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
