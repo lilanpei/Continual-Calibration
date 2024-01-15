@@ -147,8 +147,8 @@ if __name__ == "__main__":
         model_name = "SimpleMLP"
 
     plugins = []
-    bm = benchmark_with_validation_stream(benchmark,  input_stream = 'train',
-                                     output_stream='valid', validation_size=args.validation_split)
+    foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
+    bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
     mem_size = args.mem_size
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
