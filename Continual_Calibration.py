@@ -109,7 +109,7 @@ class Continual_Calibration:
             val_experiences_list = AvalancheDataset(val_experiences_list)
 
             if self.strategy_name == "JointTraining":
-                self.strategy.train(self.benchmark.train_stream)
+                self.strategy.train(self.benchmark.train_stream, eval_streams=[self.benchmark.valid_stream])
                 print('Training completed')
 
                 if self.pp_calibration_mode:
@@ -132,7 +132,7 @@ class Continual_Calibration:
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
 
                     # train returns a dictionary which contains all the metric values
-                    self.strategy.train(experience_tr)
+                    self.strategy.train(experience_tr, eval_streams=[experience_val])
                     print('Training completed')
 
                     if self.pp_calibration_mode:
