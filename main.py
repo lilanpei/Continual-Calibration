@@ -115,6 +115,7 @@ if __name__ == "__main__":
         "-cid",
         "--cuda_id",
         type=str,
+        default="0",
         help="cuda gpu index",
     )
 
