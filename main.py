@@ -47,7 +47,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-vs",
-        "--validation_size",
+        "--validation_split",
         type=float,
         default=0.2,
         help="validation split size",
@@ -129,8 +129,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    validation_size = args.validation_size
-    foo = lambda exp: class_balanced_split_strategy(validation_size, exp)
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
@@ -139,7 +137,9 @@ if __name__ == "__main__":
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
-    bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
+
+    bm = benchmark_with_validation_stream(benchmark,  input_stream = 'train',
+                                     output_stream='valid', validation_size=args.validation_split)
     mem_size = args.mem_size
     patience = args.patience
     train_mb_size = args.train_mb_size
