@@ -48,7 +48,6 @@ class Continual_Calibration:
         self.eval_plugin = eval_plugin
         self.optimizer = optimizer
         self.criterion = criterion
-        print("@@@@@@@@@@", criterion, "@@@@@@@@@@")
         self.pp_calibration_mode = pp_calibration_mode
         self.pp_cal_mixed_data = pp_cal_mixed_data
         self.calibration_mode_str = calibration_mode_str
@@ -113,7 +112,6 @@ class Continual_Calibration:
                 print('Training completed')
 
                 if self.pp_calibration_mode:
-                    print('!!!!!!!! JointTraining calibration !!!!!!!')
                     self.model = ModelWithTemperature(self.model, self.device)
                     print("%%%% before calibrate temperature", self.model.temperature.data)
                     self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 0)
