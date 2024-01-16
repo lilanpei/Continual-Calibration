@@ -1,7 +1,7 @@
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import MultiStepLR
 from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
@@ -127,7 +127,6 @@ if __name__ == "__main__":
         help="Number of epochs to wait without generalization"
         "improvements before stopping the training .",
     )
-
     parser.add_argument(
         "-ep",
         "--early_stopping",
@@ -136,9 +135,10 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    th.set_num_threads(1)
 
     if args.dataset_name == "SplitCIFAR100":
-        benchmark = SplitCIFAR100(n_experiences=10)
+        benchmark = SplitCIFAR100(n_experiences=5)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         model_name = "ResNet110"
     else:
@@ -153,11 +153,11 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=5e-4)
-    sched = LRSchedulerPlugin(
-                MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.2) #learning rate decay
-            )
-    plugins.append(sched)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    # sched = LRSchedulerPlugin(
+    #             MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.2) #learning rate decay
+    #         )
+    # plugins.append(sched)
     ent_weight = args.ent_weight
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
