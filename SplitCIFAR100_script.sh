@@ -1,11 +1,11 @@
-python main.py -sn "JointTraining" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" 
-python main.py -sn "JointTraining" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -stcm
-python main.py -sn "JointTraining" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -ppcm
-python main.py -sn "Naive" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10"
-python main.py -sn "Naive" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -stcm
-python main.py -sn "Naive" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -ppcm
-python main.py -sn "Naive" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -ppcm -ppdm
-python main.py -sn "Replay" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ms 4000 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10"
-python main.py -sn "Replay" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ms 4000 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -stcm
-python main.py -sn "Replay" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ms 4000 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -ppcm
-python main.py -sn "Replay" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.1 -ms 4000 -ep -p 10 --logdir "./logs/SplitCIFAR100_logs/run2_epochs_200_ep_10" -ppcm -ppdm
+nohup python main.py --cuda_id 1 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn JointTraining > joint.log 2>&1 &
+nohup python main.py --cuda_id 1 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn JointTraining -stcm > joint_self.log 2>&1 &
+nohup python main.py --cuda_id 1 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn JointTraining -ppcm > joint_post.log 2>&1 &
+nohup python main.py --cuda_id 1 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Naive > naive.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Naive -stcm > naive_self.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Naive -ppcm > naive_post.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Naive -ppcm -ppdm > naive_post_mixed.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Replay -ms 5000 > replay.log 2>&1 &
+nohup python main.py --cuda_id 3 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Replay -ms 5000 -stcm > replay_self.log 2>&1 &
+nohup python main.py --cuda_id 3 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Replay -ms 5000 -ppcm > replay_post.log 2>&1 &
+nohup python main.py --cuda_id 3 --logdir ./logs/SplitCIFAR100_ne5_fixlr -ts 256 -es 256 -tp 200 -lr 0.0001 -ep -p 10 -dn SplitCIFAR100 -sn Replay -ms 5000 -ppcm -ppdm > replay_post_mixed.log 2>&1 &
