@@ -4,3 +4,4 @@ logs/
 .txt
 *.pyc
 datasets/
+imgs/
