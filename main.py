@@ -138,7 +138,7 @@ if __name__ == "__main__":
     th.set_num_threads(1)
 
     if args.dataset_name == "SplitCIFAR100":
-        benchmark = SplitCIFAR100(n_experiences=5)
+        benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         model_name = "ResNet110"
     else:
