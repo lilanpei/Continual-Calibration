@@ -34,8 +34,12 @@ class Continual_Calibration:
                  pp_calibration_mode,
                  pp_cal_mixed_data,
                  calibration_mode_str,
+                 lrpp,
+                 max_iter,
                  logdir
                  ):
+        self.lrpp = lrpp
+        self.max_iter = max_iter
         self.tb_logger = tb_logger
         self.model = model
         self.strategy_name = strategy_name
@@ -115,7 +119,7 @@ class Continual_Calibration:
                     self.model = ModelWithTemperature(self.model, self.device)
                     print("%%%% before calibrate temperature", self.model.temperature.data)
                     self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 0)
-                    self.calibrate_temperature(val_experiences_list)
+                    self.calibrate_temperature(self.lrpp, self.max_iter, val_experiences_list)
                     optimal_temperature = self.model.temperature
                     print("%%%% after calibrate temperature", optimal_temperature.data)
                     self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 1)
@@ -150,7 +154,7 @@ class Continual_Calibration:
                             buffer_val = experience_val_data
 
                         print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
-                        self.calibrate_temperature(buffer_val)
+                        self.calibrate_temperature(self.lrpp, self.max_iter, buffer_val)
                         optimal_temperature = self.model.temperature
                         print("%%%% after calibrate temperature", optimal_temperature.data)
                         self.tb_logger.writer.add_scalar("temperature", self.model.temperature.data, 1)
@@ -164,14 +168,14 @@ class Continual_Calibration:
 
             return results
 
-    def calibrate_temperature(self, experience_val):
+    def calibrate_temperature(self, lrpp, max_iter, experience_val):
         """
         Tune the tempearature of the model (using the validation set).
         We're going to set it to optimize ExperienceECE.
         experience_val : validation experience
         """
 
-        optimizer = optim.LBFGS([self.model.temperature], lr=0.01, max_iter=50)
+        optimizer = optim.LBFGS([self.model.temperature], lr=lrpp, max_iter=max_iter)
         logits_list = []
         labels_list = []
         nll_criterion = nn.CrossEntropyLoss().to(self.device)

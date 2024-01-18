@@ -15,7 +15,7 @@ from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
-from avalanche.training.plugins import EvaluationPlugin
+from avalanche.training.plugins import EvaluationPlugin, LwFPlugin
 from avalanche.training.plugins.lr_scheduling import LRSchedulerPlugin
 from avalanche.training.plugins.early_stopping import EarlyStoppingPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
@@ -66,6 +66,20 @@ if __name__ == "__main__":
         type=float,
         default=0.001,
         help="learning rate",
+    )
+    parser.add_argument(
+        "-lrpp",
+        "--learning_rate_for_ppcm",
+        type=float,
+        default=0.01,
+        help="learning rate for post processing calibration",
+    )
+    parser.add_argument(
+        "-mi",
+        "--max_iter",
+        type=float,
+        default=50,
+        help="max iteration for post processing calibration",
     )
     parser.add_argument(
         "-m",
@@ -134,11 +148,16 @@ if __name__ == "__main__":
         help="Number of epochs to wait without generalization"
         "improvements before stopping the training .",
     )
-
     parser.add_argument(
         "-ep",
         "--early_stopping",
         help="Early stopping",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-lwf",
+        "--LearningWithoutForgetting",
+        help="Learning Without Forgetting method applies knowledge distilllation to mitigate forgetting",
         action="store_true",
     )
 
@@ -197,13 +216,17 @@ if __name__ == "__main__":
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
         plugins.append(early_stopping)
 
+    if args.LearningWithoutForgetting:
+        lwf = LwFPlugin()
+        plugins.append(lwf)
+
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
         calibration_mode = "SelfTraining"
     else:
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
-    
+
     device = th.device(f"cuda:{args.cuda_id}" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
@@ -230,7 +253,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.learning_rate_for_ppcm, args.max_iter, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
