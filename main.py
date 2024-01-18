@@ -3,7 +3,7 @@ import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import MultiStepLR
@@ -143,6 +143,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    th.set_num_threads(1)
     th.random.manual_seed(42)
     plugins = []
     milestones = None
@@ -186,12 +187,12 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=5e-4)
-    if milestones:
-        sched = LRSchedulerPlugin(
-                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
-                )
-        plugins.append(sched)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    # if milestones:
+    #     sched = LRSchedulerPlugin(
+    #                 MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+    #             )
+    #     plugins.append(sched)
     ent_weight = args.ent_weight
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')

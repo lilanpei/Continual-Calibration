@@ -1,11 +1,11 @@
-python main.py -sn "JointTraining" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10" 
-python main.py -sn "JointTraining" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10" -stcm
-python main.py -sn "JointTraining" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10" -ppcm
-python main.py -sn "Naive" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10"
-python main.py -sn "Naive" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10" -stcm
-python main.py -sn "Naive" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10" -ppcm
-python main.py -sn "Naive" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10" -ppcm -ppdm
-python main.py -sn "Replay" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ms 2000 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10_ms_2000"
-python main.py -sn "Replay" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ms 2000 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10_ms_2000" -stcm
-python main.py -sn "Replay" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ms 2000 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10_ms_2000" -ppcm
-python main.py -sn "Replay" -dn "EuroSAT" -ts 128 -es 128 -tp 100 -lr 0.01 -ms 2000 -ep -p 10 --logdir "./logs/EuroSAT_logs/run1_epochs_100_ep_10_ms_2000" -ppcm -ppdm
+nohup python main.py --cuda_id 0 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn JointTraining > joint.log 2>&1 &
+nohup python main.py --cuda_id 0 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn JointTraining -stcm > joint_self.log 2>&1 &
+nohup python main.py --cuda_id 1 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn JointTraining -ppcm > joint_post.log 2>&1 &
+nohup python main.py --cuda_id 1 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Naive > naive.log 2>&1 &
+nohup python main.py --cuda_id 1 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Naive -stcm > naive_self.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Naive -ppcm > naive_post.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Naive -ppcm -ppdm > naive_post_mixed.log 2>&1 &
+nohup python main.py --cuda_id 2 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Replay -ms 5000 > replay.log 2>&1 &
+nohup python main.py --cuda_id 3 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Replay -ms 5000 -stcm > replay_self.log 2>&1 &
+nohup python main.py --cuda_id 3 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Replay -ms 5000 -ppcm > replay_post.log 2>&1 &
+nohup python main.py --cuda_id 3 --logdir ./logs/EuroSAT_logs_bs256 -dn EuroSAT -ts 256 -es 256 -tp 200 -lr 0.001 -ep -p 10 -sn Replay -ms 5000 -ppcm -ppdm > replay_post_mixed.log 2>&1 &
