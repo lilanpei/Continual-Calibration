@@ -4,7 +4,7 @@ import argparse
 import torch as th
 import pickle
 from torch.optim import SGD, Adam
-import torch.nn as nn, Adam
+import torch.nn as nn
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import MultiStepLR
 from torchvision import transforms, models
