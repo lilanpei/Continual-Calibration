@@ -5,3 +5,5 @@ logs/
 *.pyc
 eurosat/
 *.eps
+datasets/
+imgs/
