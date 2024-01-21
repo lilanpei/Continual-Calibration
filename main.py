@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
-        calibration_mode = "SelfTraining"
+        calibration_mode = "SelfTraining" + str(ent_weight)
         print("########## SelfTraining ##########")
     else:
         criterion = CrossEntropyLoss()
