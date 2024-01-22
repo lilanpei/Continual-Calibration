@@ -1,7 +1,7 @@
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 from torch.nn import CrossEntropyLoss
 from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
     ent_weight = args.ent_weight
 
     if args.early_stopping:
@@ -167,7 +167,7 @@ if __name__ == "__main__":
 
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
-        calibration_mode = "SelfTraining"
+        calibration_mode = "SelfTraining_" + str(ent_weight)
         print("########## SelfTraining ##########")
     else:
         criterion = CrossEntropyLoss()
