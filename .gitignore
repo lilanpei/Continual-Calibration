@@ -1,8 +1,10 @@
 .idea/
 logs/
-.DS_Store
-.txt
+eurosat/
 datasets/
 __pycache__/
-eurosat/
 imgs/
+.DS_Store
+.txt
+*.pyc
+*.eps

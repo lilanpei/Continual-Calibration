@@ -1,13 +1,22 @@
+import os
+import ssl
 import argparse
 import torch as th
 import pickle
 from torch.optim import SGD, Adam
+import torch.nn as nn
 from torch.nn import CrossEntropyLoss
+from torch.optim.lr_scheduler import MultiStepLR
+from torchvision import transforms, models
+from torchvision.datasets import EuroSAT
+from torchvision.transforms import ToTensor
+from avalanche.benchmarks import nc_benchmark
 from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
 from avalanche.training.plugins import EvaluationPlugin
+from avalanche.training.plugins.lr_scheduling import LRSchedulerPlugin
 from avalanche.training.plugins.early_stopping import EarlyStoppingPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
 from Continual_Calibration import Continual_Calibration
@@ -48,7 +57,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-vs",
-        "--validation_size",
+        "--validation_split",
         type=float,
         default=0.2,
         help="validation split size",
@@ -135,13 +144,39 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
     th.set_num_threads(1)
+    th.random.manual_seed(42)
+    plugins = []
+    milestones = None
 
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
-        model = pytorchcv_wrapper.densenet("cifar100", depth=40, pretrained=False)
-        model_name = "DenseNet40"
+        model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
+        milestones=[60, 120, 160]
+        model_name = "ResNet110"
+    elif args.dataset_name == "EuroSAT":
+        # --- TRANSFORMATIONS
+        transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
+        # --- BENCHMARK CREATION
+        # root = os.path.join(root, SUBDIR)
+        ssl._create_default_https_context = ssl._create_unverified_context
+        dataset = EuroSAT(root=".", transform=transform, download=True)
+        n = int(len(dataset) * 0.9)
+        eurosat_train, eurosat_test = th.utils.data.random_split(dataset, [n, len(dataset) - n])
+        benchmark = nc_benchmark(
+            eurosat_train,
+            eurosat_test,
+            5,
+            task_labels=False,
+            seed=1234,
+            fixed_class_order=[i for i in range(10)],
+        )
+        model = models.resnet50()
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, 10)
+        model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
+        milestones = [50,75,90]
+        model_name = "ResNet50"
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
@@ -151,15 +186,22 @@ if __name__ == "__main__":
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
 
-    plugins = []
-    foo = lambda exp: class_balanced_split_strategy(args.validation_size, exp)
+    foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
     mem_size = args.mem_size
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    # if milestones:
+    #     sched = LRSchedulerPlugin(
+    #                 MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+    #             )
+    #     plugins.append(sched)
     ent_weight = args.ent_weight
+    if args.early_stopping:
+        early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
+        plugins.append(early_stopping)
 
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
@@ -168,11 +210,9 @@ if __name__ == "__main__":
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
         calibration_mode = "SelfTraining_" + str(ent_weight)
-        print("########## SelfTraining ##########")
     else:
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
-        print("########## NoSelfTraining ##########")
     
     device = th.device(f"cuda:{args.cuda_id}" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
