@@ -22,6 +22,8 @@ from avalanche.benchmarks.generators import benchmark_with_validation_stream, cl
 from Continual_Calibration import Continual_Calibration
 from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
+from atari_dataset import generate_atari_benchmark
+from DQN_model import DQNModel
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -175,6 +177,10 @@ if __name__ == "__main__":
         model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
         milestones = [50,75,90]
         model_name = "ResNet50"
+    elif args.dataset_name == "Atari":
+        benchmark = generate_atari_benchmark(n_experinces=5)
+        model = DQNModel(num_actions=18)
+        model_name = "NatureDQNNetwork"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
@@ -193,6 +199,10 @@ if __name__ == "__main__":
     #             )
     #     plugins.append(sched)
     ent_weight = args.ent_weight
+    if args.early_stopping:
+        early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
+        plugins.append(early_stopping)
+
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
         plugins.append(early_stopping)
@@ -222,7 +232,7 @@ if __name__ == "__main__":
     text_logger = TextLogger(open(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
-    
+
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
         ExperienceECE(),  # after training on each experience it computes ECE on each experience
