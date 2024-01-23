@@ -128,6 +128,18 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-ppvs",
+        "--post_processing_calibration_vector_scaling",
+        help="post processing calibration with vector scaling",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-ppms",
+        "--post_processing_calibration_matrix_scaling",
+        help="post processing calibration with matrix scaling",
+        action="store_true",
+    )
+    parser.add_argument(
         "-ld",
         "--logdir",
         type=str,
@@ -171,6 +183,7 @@ if __name__ == "__main__":
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         milestones=[60, 120, 160]
         model_name = "ResNet110"
+        num_classes = 100
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -194,10 +207,12 @@ if __name__ == "__main__":
         model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
         milestones = [50,75,90]
         model_name = "ResNet50"
+        num_classes = 10
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
+        num_classes = 10
 
     foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
@@ -231,9 +246,19 @@ if __name__ == "__main__":
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
     pp_cal_mixed_data = args.post_processing_calibration_mixed_data
+    pp_cal_vector_scaling = args.post_processing_calibration_vector_scaling
+    pp_cal_matrix_scaling = args.post_processing_calibration_matrix_scaling
 
     if pp_calibration_mode:
         calibration_mode = calibration_mode + "_" + "PostProcessing"
+
+        if pp_cal_vector_scaling:
+            calibration_mode = calibration_mode + "_VectorScaling"
+        elif pp_cal_matrix_scaling:
+            calibration_mode = calibration_mode + "_MatrixScaling"
+        else:
+            calibration_mode = calibration_mode + "_TemperatureScaling"
+
         if pp_cal_mixed_data:
             calibration_mode = calibration_mode + "_MixedData"
     else:
@@ -253,7 +278,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.learning_rate_for_ppcm, args.max_iter, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, pp_cal_vector_scaling, pp_cal_matrix_scaling, calibration_mode, num_classes, args.learning_rate_for_ppcm, args.max_iter, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
