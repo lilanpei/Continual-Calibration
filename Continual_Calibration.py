@@ -134,6 +134,9 @@ class Continual_Calibration:
                 results.append(self.strategy.eval(self.benchmark.test_stream))
             else:
                 buffer_val = None
+                weights_pre_exp = None
+                bias_pre_exp = None
+                temperature_pre_exp = None
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
                     print("Start of experience: ", experience_tr.current_experience)
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
@@ -145,10 +148,16 @@ class Continual_Calibration:
                     if self.pp_calibration_mode:
                         if self.pp_cal_vector_scaling:
                             self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, True)
+                            if experience_tr.current_experience > 0:
+                                self.model.weights_init(weights_pre_exp, bias_pre_exp)
                         elif self.pp_cal_matrix_scaling:
                             self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes)
+                            if experience_tr.current_experience > 0:
+                                self.model.weights_init(weights_pre_exp, bias_pre_exp)
                         else:
                             self.model = ModelWithTemperature(self.model, self.device)
+                            if experience_tr.current_experience > 0:
+                                self.model.temperature_init(temperature_pre_exp)
 
                         experience_val_data = make_classification_dataset(experience_val.dataset)
                         if buffer_val and self.pp_cal_mixed_data:
@@ -169,6 +178,11 @@ class Continual_Calibration:
                     results.append(self.strategy.eval(self.benchmark.test_stream))
 
                     if self.pp_calibration_mode:
+                        if self.pp_cal_vector_scaling or self.pp_cal_matrix_scaling:
+                            weights_pre_exp = self.model.weights
+                            bias_pre_exp = self.model.bias
+                        else:
+                            temperature_pre_exp = self.model.temperature
                         self.model = self.model.model
 
             return results

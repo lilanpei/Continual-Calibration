@@ -22,6 +22,10 @@ class ModelWithTemperature(nn.Module):
         self.device = device
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 
+    def temperature_init(self, temperature):
+        print("@@@@@@@@@__temperature_init__",temperature.data)
+        self.temperature.data.copy_(temperature.data)
+
     def forward(self, input):
         logits = self.model(input)
         return self.temperature_scale(logits)
@@ -87,12 +91,17 @@ class MatrixAndVectorScaling(nn.Module):
         self.weights = nn.Parameter(th.ones(num_classes, num_classes))
         self.bias = nn.Parameter(th.zeros(num_classes))
 
+    def weights_init(self, weights, bias):
+        print("@@@@@@@@@__weights_init__", weights.data, bias.data)
+        self.weights.data.copy_(weights.data)
+        self.bias.data.copy_(bias.data)
+
     def forward(self, logits):
         if self.vector_scaling:
-            return logits * th.diag(self.weights) + self.bias
+            return logits.to(self.device) * th.diag(self.weights.to(self.device)) + self.bias.to(self.device)
         else:
-            bias = self.bias.unsqueeze(0).expand(logits.size(0), -1).to(self.device)
-            return th.matmul(logits, self.weights) + bias
+            bias = self.bias.unsqueeze(0).expand(logits.size(0), -1)
+            return th.matmul(logits.to(self.device), self.weights.to(self.device)) + bias.to(self.device)
 
     def calibrate(self, lrpp, max_iter, experience_val):
         optimizer = optim.LBFGS([self.weights, self.bias], lr=lrpp, max_iter=max_iter)
