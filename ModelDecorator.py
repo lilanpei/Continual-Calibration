@@ -3,6 +3,7 @@ Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger
 On Calibration of Modern Neural Networks.
 Adapted from: https://github.com/gpleiss/temperature_scaling
 """
+import copy
 import torch as th
 from torch import nn, optim
 from ECE_metrics import ECE
@@ -18,7 +19,7 @@ class ModelWithTemperature(nn.Module):
     """
     def __init__(self, model, device):
         super(ModelWithTemperature, self).__init__()
-        self.model = model
+        self.model = copy.deepcopy(model)
         self.device = device
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 

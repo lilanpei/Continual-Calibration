@@ -3,6 +3,7 @@ Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger
 On Calibration of Modern Neural Networks.
 Adapted from: https://github.com/gpleiss/temperature_scaling
 """
+import copy
 import torch as th
 from torch import nn
 from torch.nn import functional as F
@@ -183,6 +184,6 @@ class Continual_Calibration:
                             bias_pre_exp = self.model.bias
                         else:
                             temperature_pre_exp = self.model.temperature
-                        self.model = self.model.model
+                        self.model = copy.deepcopy(self.model.model)
 
             return results
