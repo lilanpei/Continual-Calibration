@@ -154,22 +154,22 @@ class Continual_Calibration:
                             if experience_tr.current_experience > 0:
                                 self.model.weights_init(weights_pre_exp, bias_pre_exp)
                         elif self.pp_cal_matrix_scaling:
-                            self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes)
+                            self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, self.num_bins)
                             if experience_tr.current_experience > 0:
                                 self.model.weights_init(weights_pre_exp, bias_pre_exp)
                         else:
-                            self.model = ModelWithTemperature(self.model, self.device)
+                            self.model = ModelWithTemperature(self.model, self.device, self.num_bins)
                             if experience_tr.current_experience > 0:
                                 self.model.temperature_init(temperature_pre_exp)
 
                         experience_val_data = make_classification_dataset(experience_val.dataset)
                         if buffer_val and self.pp_cal_mixed_data:
-                            buffer_length = len(buffer_val)
+                            buffer_length = len(experience_val_data)
                             indices = list(range(buffer_length))
                             np.random.shuffle(indices)
                             val_split_index = int(np.floor(0.4 * buffer_length))
-                            new_buffer = AvalancheSubset(buffer_val, indices[:val_split_index])
-                            buffer_val = AvalancheConcatDataset([new_buffer, experience_val_data])
+                            new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
+                            buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
                         else:
                             buffer_val = experience_val_data
 
