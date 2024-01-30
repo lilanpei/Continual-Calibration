@@ -157,8 +157,14 @@ if __name__ == "__main__":
         "--patience",
         type=int,
         default=3,
-        help="Number of epochs to wait without generalization"
-        "improvements before stopping the training .",
+        help="Number of epochs to wait without generalization",
+    )
+    parser.add_argument(
+        "-nb",
+        "--num_bins",
+        type=int,
+        default=10,
+        help="Number of bins in ECE Histogram",
     )
     parser.add_argument(
         "-ep",
@@ -273,8 +279,8 @@ if __name__ == "__main__":
     
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
-        ExperienceECE(),  # after training on each experience it computes ECE on each experience
-        ExpECEHistogram(),
+        ExperienceECE(num_bins=args.num_bins),  # after training on each experience it computes ECE on each experience
+        ExpECEHistogram(num_bins=args.num_bins),
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
