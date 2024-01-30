@@ -17,10 +17,11 @@ class ModelWithTemperature(nn.Module):
         NB: Output of the neural network should be the classification logits,
             NOT the softmax (or log softmax)!
     """
-    def __init__(self, model, device):
+    def __init__(self, model, device, num_bins):
         super(ModelWithTemperature, self).__init__()
         self.model = copy.deepcopy(model)
         self.device = device
+        self.num_bins = num_bins
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 
     def temperature_init(self, temperature):
@@ -49,7 +50,7 @@ class ModelWithTemperature(nn.Module):
         logits_list = []
         labels_list = []
         nll_criterion = nn.CrossEntropyLoss().to(self.device)
-        ece_metric = ECE()
+        ece_metric = ECE(num_bins=self.num_bins)
         with th.no_grad():
             for input, label, _ in TaskBalancedDataLoader(experience_val):
                 logits = self.model(input.to(self.device)).to(self.device)
@@ -84,10 +85,11 @@ class ModelWithTemperature(nn.Module):
 
 
 class MatrixAndVectorScaling(nn.Module):
-    def __init__(self, model, device, num_classes, vector_scaling=False):
+    def __init__(self, model, device, num_classes, num_bins, vector_scaling=False):
         super(MatrixAndVectorScaling, self).__init__()
         self.model = model
         self.device = device
+        self.num_bins = num_bins
         self.vector_scaling = vector_scaling
         self.weights = nn.Parameter(th.ones(num_classes, num_classes))
         self.bias = nn.Parameter(th.zeros(num_classes))
@@ -109,7 +111,7 @@ class MatrixAndVectorScaling(nn.Module):
         logits_list = []
         labels_list = []
         nll_criterion = nn.CrossEntropyLoss().to(self.device)
-        ece_metric = ECE()
+        ece_metric = ECE(num_bins=self.num_bins)
         with th.no_grad():
             for input, label, _ in TaskBalancedDataLoader(experience_val):
                 logits = self.model(input.to(self.device)).to(self.device)

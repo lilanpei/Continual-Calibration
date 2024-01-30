@@ -38,6 +38,7 @@ class Continual_Calibration:
                  num_classes,
                  lrpp,
                  max_iter,
+                 num_bins,
                  logdir
                  ):
         self.lrpp = lrpp
@@ -60,6 +61,7 @@ class Continual_Calibration:
         self.pp_cal_vector_scaling = pp_cal_vector_scaling
         self.pp_cal_matrix_scaling = pp_cal_matrix_scaling
         self.calibration_mode_str = calibration_mode_str
+        self.num_bins = num_bins
         self.log_dir = logdir
 
         if self.strategy_name == "JointTraining":
@@ -122,11 +124,11 @@ class Continual_Calibration:
 
                 if self.pp_calibration_mode:
                     if self.pp_cal_vector_scaling:
-                        self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, True)
+                        self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, self.num_bins, True)
                     elif self.pp_cal_matrix_scaling:
-                        self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes)
+                        self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, self.num_bins)
                     else:
-                        self.model = ModelWithTemperature(self.model, self.device)
+                        self.model = ModelWithTemperature(self.model, self.device, self.num_bins)
 
                     self.model.calibrate(self.lrpp, self.max_iter, val_experiences_list)
 
