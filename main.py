@@ -3,7 +3,7 @@ import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import MultiStepLR
@@ -22,6 +22,8 @@ from avalanche.benchmarks.generators import benchmark_with_validation_stream, cl
 from Continual_Calibration import Continual_Calibration
 from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
+from atari_dataset import generate_atari_benchmark
+from DQN_model import DQNModel
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -178,9 +180,15 @@ if __name__ == "__main__":
         help="Learning Without Forgetting method applies knowledge distilllation to mitigate forgetting",
         action="store_true",
     )
+    parser.add_argument(
+        "-v",
+        "--version",
+        type=str,
+        help="run version",
+    )
 
     args = parser.parse_args()
-    th.random.manual_seed(42)
+    th.set_num_threads(1)
     plugins = []
     milestones = None
 
@@ -211,9 +219,13 @@ if __name__ == "__main__":
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, 10)
         model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
-        milestones = [50,75,90]
+        # milestones = [50,75,90]
         model_name = "ResNet50"
         num_classes = 10
+    elif args.dataset_name == "Atari":
+        benchmark = generate_atari_benchmark(n_experinces=5)
+        model = DQNModel(num_actions=18)
+        model_name = "NatureDQNNetwork"
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
@@ -226,7 +238,7 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=5e-4)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
     if milestones:
         sched = LRSchedulerPlugin(
                     MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
@@ -241,9 +253,13 @@ if __name__ == "__main__":
         lwf = LwFPlugin()
         plugins.append(lwf)
 
+    if args.early_stopping:
+        early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
+        plugins.append(early_stopping)
+
     if args.self_training_calibration_mode:
         criterion = Ent_Loss(ent_weight)
-        calibration_mode = "SelfTraining"
+        calibration_mode = "SelfTraining_" + str(ent_weight)
     else:
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
@@ -269,6 +285,8 @@ if __name__ == "__main__":
             calibration_mode = calibration_mode + "_MixedData"
     else:
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
+    
+    calibration_mode += args.version
 
     # log to Tensorboard
     tb_logger = TensorboardLogger(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')
@@ -276,7 +294,7 @@ if __name__ == "__main__":
     text_logger = TextLogger(open(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_log.txt', 'a'))
     # print to stdout
     interactive_logger = InteractiveLogger()
-    
+
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
         ExperienceECE(num_bins=args.num_bins),  # after training on each experience it computes ECE on each experience
