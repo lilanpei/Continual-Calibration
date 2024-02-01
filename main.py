@@ -142,10 +142,15 @@ if __name__ == "__main__":
         help="Early stopping",
         action="store_true",
     )
+    parser.add_argument(
+        "-v",
+        "--version",
+        type=str,
+        help="run version",
+    )
 
     args = parser.parse_args()
     th.set_num_threads(1)
-    th.random.manual_seed(42)
     plugins = []
     milestones = None
 
@@ -175,7 +180,7 @@ if __name__ == "__main__":
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, 10)
         model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
-        milestones = [50,75,90]
+        # milestones = [50,75,90]
         model_name = "ResNet50"
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
@@ -193,11 +198,11 @@ if __name__ == "__main__":
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
     optimizer = Adam(model.parameters(), lr=args.learning_rate)
-    # if milestones:
-    #     sched = LRSchedulerPlugin(
-    #                 MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
-    #             )
-    #     plugins.append(sched)
+    if milestones:
+        sched = LRSchedulerPlugin(
+                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+                )
+        plugins.append(sched)
     ent_weight = args.ent_weight
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
@@ -225,6 +230,8 @@ if __name__ == "__main__":
             calibration_mode = calibration_mode + "_MixedData"
     else:
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
+    
+    calibration_mode += args.version
 
     # log to Tensorboard
     tb_logger = TensorboardLogger(f'{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}')

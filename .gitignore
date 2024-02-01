@@ -8,3 +8,4 @@ imgs/
 .txt
 *.pyc
 *.eps
+*.log
