@@ -135,6 +135,7 @@ class Continual_Calibration:
                 print('Computing accuracy on the whole test set')
                 # test also returns a dictionary which contains all the metric values
                 results.append(self.strategy.eval(self.benchmark.test_stream))
+                th.save(self.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
             else:
                 buffer_val = None
                 weights_pre_exp = None
@@ -179,6 +180,12 @@ class Continual_Calibration:
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
                     results.append(self.strategy.eval(self.benchmark.test_stream))
+
+                    # store model after each experience
+                    th.save(
+                        self.model.state_dict(),
+                        f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}_exp{experience_tr.current_experience}.pt"
+                    )
 
                     if self.pp_calibration_mode:
                         if self.pp_cal_vector_scaling or self.pp_cal_matrix_scaling:
