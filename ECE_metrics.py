@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 class ECE(Metric[float]):
 
-    def __init__(self, bins=None):
+    def __init__(self, num_bins, bins=None):
         super().__init__()
 
         if bins is not None:
@@ -18,7 +18,7 @@ class ECE(Metric[float]):
             assert max(bins) <= 1.0 and min(bins) >= 0.0, "Bins must be in [0, 1]"
 
         if bins is None:
-            bins = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+            bins = np.linspace(0, 1, num_bins + 1)
         self.bins = bins
         self.example_confidences = None
         self.example_accuracy = None
@@ -76,7 +76,7 @@ class ECE(Metric[float]):
 
 class ExpECEHistogram(PluginMetric):
 
-    def __init__(self, bins=None):
+    def __init__(self, num_bins, bins=None):
         super().__init__()
 
         if bins is not None:
@@ -84,7 +84,7 @@ class ExpECEHistogram(PluginMetric):
             assert max(bins) <= 1.0 and min(bins) >= 0.0, "Bins must be in [0, 1]"
 
         if bins is None:
-            bins = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+            bins = np.linspace(0, 1, num_bins + 1)
 
         self.middle_bins = []
         for i in range(len(bins) - 1):
@@ -176,8 +176,8 @@ class ExpECEHistogram(PluginMetric):
 
 
 class GenericECE(GenericPluginMetric[float, ECE]):
-    def __init__(self, reset_at, emit_at, mode, bins=None):
-        super().__init__(ECE(bins=bins), reset_at=reset_at, emit_at=emit_at, mode=mode)
+    def __init__(self, reset_at, emit_at, mode, num_bins, bins=None):
+        super().__init__(ECE(num_bins=num_bins, bins=bins), reset_at=reset_at, emit_at=emit_at, mode=mode)
 
     def reset(self) -> None:
         self._metric.reset()
@@ -190,9 +190,10 @@ class GenericECE(GenericPluginMetric[float, ECE]):
 
 
 class ExperienceECE(GenericECE):
-    def __init__(self, bins=None):
+    def __init__(self, num_bins, bins=None):
         super().__init__(
             reset_at="experience", emit_at="experience", mode="eval",
+            num_bins=num_bins,
             bins=bins
         )
 

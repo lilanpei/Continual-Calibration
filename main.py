@@ -15,7 +15,7 @@ from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
-from avalanche.training.plugins import EvaluationPlugin
+from avalanche.training.plugins import EvaluationPlugin, LwFPlugin
 from avalanche.training.plugins.lr_scheduling import LRSchedulerPlugin
 from avalanche.training.plugins.early_stopping import EarlyStoppingPlugin
 from avalanche.benchmarks.generators import benchmark_with_validation_stream, class_balanced_split_strategy
@@ -70,6 +70,20 @@ if __name__ == "__main__":
         help="learning rate",
     )
     parser.add_argument(
+        "-lrpp",
+        "--learning_rate_for_ppcm",
+        type=float,
+        default=0.01,
+        help="learning rate for post processing calibration",
+    )
+    parser.add_argument(
+        "-mi",
+        "--max_iter",
+        type=float,
+        default=50,
+        help="max iteration for post processing calibration",
+    )
+    parser.add_argument(
         "-m",
         "--momentum",
         type=float,
@@ -116,6 +130,18 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "-ppvs",
+        "--post_processing_calibration_vector_scaling",
+        help="post processing calibration with vector scaling",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-ppms",
+        "--post_processing_calibration_matrix_scaling",
+        help="post processing calibration with matrix scaling",
+        action="store_true",
+    )
+    parser.add_argument(
         "-ld",
         "--logdir",
         type=str,
@@ -133,13 +159,25 @@ if __name__ == "__main__":
         "--patience",
         type=int,
         default=3,
-        help="Number of epochs to wait without generalization"
-        "improvements before stopping the training .",
+        help="Number of epochs to wait without generalization",
+    )
+    parser.add_argument(
+        "-nb",
+        "--num_bins",
+        type=int,
+        default=10,
+        help="Number of bins in ECE Histogram",
     )
     parser.add_argument(
         "-ep",
         "--early_stopping",
         help="Early stopping",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-lwf",
+        "--LearningWithoutForgetting",
+        help="Learning Without Forgetting method applies knowledge distilllation to mitigate forgetting",
         action="store_true",
     )
     parser.add_argument(
@@ -159,6 +197,7 @@ if __name__ == "__main__":
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         milestones=[60, 120, 160]
         model_name = "ResNet110"
+        num_classes = 100
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -182,6 +221,7 @@ if __name__ == "__main__":
         model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
         # milestones = [50,75,90]
         model_name = "ResNet50"
+        num_classes = 10
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
@@ -190,6 +230,7 @@ if __name__ == "__main__":
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
+        num_classes = 10
 
     foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
@@ -208,6 +249,10 @@ if __name__ == "__main__":
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
         plugins.append(early_stopping)
 
+    if args.LearningWithoutForgetting:
+        lwf = LwFPlugin()
+        plugins.append(lwf)
+
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
         plugins.append(early_stopping)
@@ -218,14 +263,24 @@ if __name__ == "__main__":
     else:
         criterion = CrossEntropyLoss()
         calibration_mode = "NoSelfTraining"
-    
+
     device = th.device(f"cuda:{args.cuda_id}" if th.cuda.is_available() else "cpu")
     strategy_name = args.strategy_name
     pp_calibration_mode = args.post_processing_calibration_mode
     pp_cal_mixed_data = args.post_processing_calibration_mixed_data
+    pp_cal_vector_scaling = args.post_processing_calibration_vector_scaling
+    pp_cal_matrix_scaling = args.post_processing_calibration_matrix_scaling
 
     if pp_calibration_mode:
         calibration_mode = calibration_mode + "_" + "PostProcessing"
+
+        if pp_cal_vector_scaling:
+            calibration_mode = calibration_mode + "_VectorScaling"
+        elif pp_cal_matrix_scaling:
+            calibration_mode = calibration_mode + "_MatrixScaling"
+        else:
+            calibration_mode = calibration_mode + "_TemperatureScaling"
+
         if pp_cal_mixed_data:
             calibration_mode = calibration_mode + "_MixedData"
     else:
@@ -242,12 +297,12 @@ if __name__ == "__main__":
 
     eval_plugin = EvaluationPlugin(
         accuracy_metrics(minibatch=True, epoch=True, experience=True, stream=True),
-        ExperienceECE(),  # after training on each experience it computes ECE on each experience
-        ExpECEHistogram(),
+        ExperienceECE(num_bins=args.num_bins),  # after training on each experience it computes ECE on each experience
+        ExpECEHistogram(num_bins=args.num_bins),
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, calibration_mode, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, pp_cal_vector_scaling, pp_cal_matrix_scaling, calibration_mode, num_classes, args.learning_rate_for_ppcm, args.max_iter, args.num_bins, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
