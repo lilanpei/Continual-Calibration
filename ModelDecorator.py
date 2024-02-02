@@ -20,6 +20,9 @@ class ModelWithTemperature(nn.Module):
     def __init__(self, model, device, num_bins):
         super(ModelWithTemperature, self).__init__()
         self.model = copy.deepcopy(model)
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = False
         self.device = device
         self.num_bins = num_bins
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
@@ -87,7 +90,10 @@ class ModelWithTemperature(nn.Module):
 class MatrixAndVectorScaling(nn.Module):
     def __init__(self, model, device, num_classes, num_bins, vector_scaling=False):
         super(MatrixAndVectorScaling, self).__init__()
-        self.model = model
+        self.model = copy.deepcopy(model)
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = False
         self.device = device
         self.num_bins = num_bins
         self.vector_scaling = vector_scaling

@@ -3,10 +3,10 @@ import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD, Adam
+from torch.optim import SGD, Adam, AdamW
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss
-from torch.optim.lr_scheduler import MultiStepLR
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torchvision import transforms, models
 from torchvision.datasets import EuroSAT
 from torchvision.transforms import ToTensor
@@ -84,11 +84,11 @@ if __name__ == "__main__":
         help="max iteration for post processing calibration",
     )
     parser.add_argument(
-        "-m",
-        "--momentum",
-        type=float,
-        default=0.9,
-        help="momentum",
+        "-t0",
+        "--T0",
+        type=int,
+        default=3,
+        help="Number of iterations for the first restart of CosineAnnealingWarmRestarts lr_scheduler",
     )
     parser.add_argument(
         "-ew",
@@ -190,12 +190,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     th.set_num_threads(1)
     plugins = []
-    milestones = None
 
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
-        milestones=[60, 120, 160]
         model_name = "ResNet110"
         num_classes = 100
     elif args.dataset_name == "EuroSAT":
@@ -219,7 +217,6 @@ if __name__ == "__main__":
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, 10)
         model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
-        # milestones = [50,75,90]
         model_name = "ResNet50"
         num_classes = 10
     elif args.dataset_name == "Atari":
@@ -238,12 +235,11 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = Adam(model.parameters(), lr=args.learning_rate)
-    if milestones:
-        sched = LRSchedulerPlugin(
-                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
-                )
-        plugins.append(sched)
+    optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=5e-4)
+
+    sched = LRSchedulerPlugin(CosineAnnealingWarmRestarts(optimizer, T_0=args.T0, T_mult=1, eta_min=1e-5))
+    plugins.append(sched)
+
     ent_weight = args.ent_weight
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
