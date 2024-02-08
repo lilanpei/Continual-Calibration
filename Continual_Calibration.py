@@ -7,7 +7,7 @@ import copy
 import torch as th
 from torch import nn
 from torch.nn import functional as F
-from avalanche.training.supervised import Naive, JointTraining, Replay
+from avalanche.training.supervised import Naive, JointTraining, Replay, DER
 from avalanche.benchmarks.utils import make_classification_dataset, AvalancheDataset, AvalancheConcatDataset, AvalancheSubset
 from avalanche.benchmarks.utils.data_attribute import ConstantSequence
 from ModelDecorator import ModelWithTemperature, MatrixAndVectorScaling
@@ -39,6 +39,9 @@ class Continual_Calibration:
                  lrpp,
                  max_iter,
                  num_bins,
+                 batch_size_mem,
+                 alpha,
+                 beta,
                  logdir
                  ):
         self.lrpp = lrpp
@@ -52,6 +55,9 @@ class Continual_Calibration:
         self.train_mb_size = train_mb_size
         self.train_epochs = train_epochs
         self.eval_mb_size = eval_mb_size
+        self.batch_size_mem=batch_size_mem
+        self.alpha=alpha
+        self.beta=beta
         self.device = device
         self.eval_plugin = eval_plugin
         self.optimizer = optimizer
@@ -85,6 +91,23 @@ class Continual_Calibration:
                     mem_size=self.mem_size,
                     criterion=self.criterion,
                     train_mb_size=self.train_mb_size,
+                    train_epochs=self.train_epochs,
+                    eval_mb_size=self.eval_mb_size,
+                    evaluator=self.eval_plugin,
+                    plugins=plugins,
+                    eval_every=1,
+                    device=self.device
+                    )
+            elif self.strategy_name == "DER":
+                self.strategy = DER(
+                    self.model,
+                    self.optimizer,
+                    mem_size=self.mem_size,
+                    criterion=self.criterion,
+                    train_mb_size=self.train_mb_size,
+                    batch_size_mem=self.batch_size_mem,
+                    alpha=self.alpha,
+                    beta=self.beta,
                     train_epochs=self.train_epochs,
                     eval_mb_size=self.eval_mb_size,
                     evaluator=self.eval_plugin,

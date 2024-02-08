@@ -186,11 +186,35 @@ if __name__ == "__main__":
         type=str,
         help="run version",
     )
+    parser.add_argument(
+        "-bsm",
+        "--batch_size_mem",
+        help="Size of the batch sampled from the DER buffer",
+        default=None
+    )
+    parser.add_argument(
+        "-a",
+        "--alpha",
+        help="DER hyperparameter weighting the MSE loss",
+        type=float,
+        default=0.1
+    )
+    parser.add_argument(
+        "-b",
+        "--beta",
+        help="DER hyperparameter weighting the CE loss",
+        type=float,
+        default=0.5
+    )
 
     args = parser.parse_args()
     th.set_num_threads(1)
     plugins = []
 
+    if args.batch_size_mem:
+        batch_size_mem = int(args.batch_size_mem)
+    else:
+        batch_size_mem = None
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
@@ -298,7 +322,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, pp_cal_vector_scaling, pp_cal_matrix_scaling, calibration_mode, num_classes, args.learning_rate_for_ppcm, args.max_iter, args.num_bins, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, pp_cal_vector_scaling, pp_cal_matrix_scaling, calibration_mode, num_classes, args.learning_rate_for_ppcm, args.max_iter, args.num_bins, batch_size_mem, args.alpha, args.beta, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
