@@ -22,9 +22,71 @@ echo "Launching runs..."
 # nohup python main.py --logdir ./logs/run8 --cuda_id 2 --early_stopping --patience 10 --train_mb_size 256 --eval_mb_size 256 --train_epochs 200 -lr 0.0005 --strategy_name JointTraining --dataset_name Atari -stcm --ent_weight 0.0025 > joint9.log 2>&1 &
 # nohup python main.py --logdir ./logs/run8 --cuda_id 2 --early_stopping --patience 10 --train_mb_size 256 --eval_mb_size 256 --train_epochs 200 -lr 0.0005 --strategy_name JointTraining --dataset_name Atari -stcm > joint_st.log 2>&1 &
 
-nohup python main.py -v 1 --cuda_id 1 --logdir ./logs/F_Atari3 -ts 256 -es 256 -tp 200 -lr 0.005 -ep -p 10 -dn Atari -sn JointTraining > jointa_1.log 2>&1 &
-nohup python main.py -v 2 --cuda_id 1 --logdir ./logs/F_Atari3 -ts 256 -es 256 -tp 200 -lr 0.005 -ep -p 10 -dn Atari -sn JointTraining > jointa_2.log 2>&1 &
-nohup python main.py -v 3 --cuda_id 2 --logdir ./logs/F_Atari3 -ts 256 -es 256 -tp 200 -lr 0.005 -ep -p 10 -dn Atari -sn JointTraining > jointa_3.log 2>&1 &
-nohup python main.py -v 1 --cuda_id 2 --logdir ./logs/F_Atari3 -ts 256 -es 256 -tp 200 -lr 0.005 -ep -p 10 -dn Atari -sn JointTraining -stcm --ent_weight 0.0075 > jointa_st1.log 2>&1 &
-nohup python main.py -v 2 --cuda_id 3 --logdir ./logs/F_Atari3 -ts 256 -es 256 -tp 200 -lr 0.005 -ep -p 10 -dn Atari -sn JointTraining -stcm --ent_weight 0.0075 > jointa_st2.log 2>&1 &
-nohup python main.py -v 3 --cuda_id 3 --logdir ./logs/F_Atari3 -ts 256 -es 256 -tp 200 -lr 0.005 -ep -p 10 -dn Atari -sn JointTraining -stcm --ent_weight 0.0075 > jointa_st3.log 2>&1 &
+# nohup python main.py -v 1 --cuda_id 1 --logdir ./logs/F_Atari4 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 -dn Atari -sn JointTraining > jointa_1.log 2>&1 &
+# nohup python main.py -v 2 --cuda_id 1 --logdir ./logs/F_Atari4 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 -dn Atari -sn JointTraining > jointa_2.log 2>&1 &
+# nohup python main.py -v 3 --cuda_id 2 --logdir ./logs/F_Atari4 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 -dn Atari -sn JointTraining > jointa_3.log 2>&1 &
+# nohup python main.py -v 1 --cuda_id 2 --logdir ./logs/F_Atari4 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 -dn Atari -sn JointTraining -stcm --ent_weight 0.0075 > jointa_st1.log 2>&1 &
+# nohup python main.py -v 2 --cuda_id 3 --logdir ./logs/F_Atari4 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 -dn Atari -sn JointTraining -stcm --ent_weight 0.0075 > jointa_st2.log 2>&1 &
+# nohup python main.py -v 3 --cuda_id 3 --logdir ./logs/F_Atari4 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 -dn Atari -sn JointTraining -stcm --ent_weight 0.0075 > jointa_st3.log 2>&1 &
+
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_1.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_2.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_3.log 2>&1 &
+
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_11.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_22.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_33.log 2>&1 &
+
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_1.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_2.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_3.log 2>&1 &
+
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_11.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_22.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_33.log 2>&1 &
+
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/PP_Atari" -lrpp 0.01 -mi 500 -ppcm > jointca_1.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/PP_Atari" -lrpp 0.01 -mi 500 -ppcm > jointca_2.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/PP_Atari" -lrpp 0.01 -mi 500 -ppcm > jointca_3.log 2>&1 &
+
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/PP_Atari2" -lrpp 0.3 -mi 500 -ppcm > jointca_11.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/PP_Atari2" -lrpp 0.3 -mi 500 -ppcm > jointca_22.log 2>&1 &
+# nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/PP_Atari2" -lrpp 0.3 -mi 500 -ppcm > jointca_33.log 2>&1 &
+
+# nohup python main.py -v 1 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" > an1.log 2>&1 &
+# nohup python main.py -v 2 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" > an2.log 2>&1 &
+# nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" > an3.log 2>&1 &
+
+# nohup python main.py -v 1 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Replay" --mem_size 5000 > ar1.log 2>&1 &
+# nohup python main.py -v 2 -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Replay" --mem_size 5000 > ar2.log 2>&1 &
+# nohup python main.py -v 3 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Replay" --mem_size 5000 > ar3.log 2>&1 &
+
+# nohup python main.py -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.1 > r1.log 2>&1 &
+# nohup python main.py -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.075 > r2.log 2>&1 &
+# nohup python main.py -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.05 > r3.log 2>&1 &
+# nohup python main.py -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.025 > r4.log 2>&1 &
+# nohup python main.py -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.01 > r5.log 2>&1 &
+# nohup python main.py -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.0075 > r6.log 2>&1 &
+# nohup python main.py -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.005 > r7.log 2>&1 &
+# nohup python main.py -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.0025 > r8.log 2>&1 &
+
+# nohup python main.py -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.1 > n1.log 2>&1 &
+# nohup python main.py -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.075 > n2.log 2>&1 &
+# nohup python main.py -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.05 > n3.log 2>&1 &
+# nohup python main.py -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.025 > n4.log 2>&1 &
+# nohup python main.py -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.01 > n5.log 2>&1 &
+# nohup python main.py -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.0075 > n6.log 2>&1 &
+# nohup python main.py -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.005 > n7.log 2>&1 &
+# nohup python main.py -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.0025 > n8.log 2>&1 &
+
+nohup python main.py -v 2 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.0025 > r1.log 2>&1 &
+nohup python main.py -v 3 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.0025 > r2.log 2>&1 &
+nohup python main.py -v 4 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ms 5000 -ep -p 10 --logdir "./logs/Atari_Replay" -stcm --ent_weight 0.0025 > r3.log 2>&1 &
+
+nohup python main.py -v 2 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.01 > n1.log 2>&1 &
+nohup python main.py -v 3 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.01 > n2.log 2>&1 &
+nohup python main.py -v 4 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.01 > n3.log 2>&1 &
+
+nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.005 > n4.log 2>&1 &
+nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.005 > n5.log 2>&1 &
+nohup python main.py -v 4 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_Naive" -stcm --ent_weight 0.005 > n6.log 2>&1 &

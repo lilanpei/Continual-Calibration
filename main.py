@@ -184,6 +184,7 @@ if __name__ == "__main__":
         "-v",
         "--version",
         type=str,
+        default="1",
         help="run version",
     )
 
@@ -226,6 +227,7 @@ if __name__ == "__main__":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
         model_name = "NatureDQNNetwork"
+        num_classes = 18
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)

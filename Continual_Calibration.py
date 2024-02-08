@@ -194,5 +194,8 @@ class Continual_Calibration:
                         else:
                             temperature_pre_exp = self.model.temperature
                         self.model = copy.deepcopy(self.model.model)
+                        if self.model:
+                            for param in self.model.parameters():
+                                param.requires_grad = True
 
             return results
