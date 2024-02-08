@@ -146,59 +146,59 @@ class Continual_Calibration:
                 print('Training completed')
 
                 if self.pp_calibration_mode:
+                    # for parameters in self.strategy.model.parameters():
+                    #     print(parameters.size())
+                    #     print(parameters)
                     if self.pp_cal_vector_scaling:
-                        self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, self.num_bins, True)
+                        self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins, True)
                     elif self.pp_cal_matrix_scaling:
-                        self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, self.num_bins)
+                        self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
                     else:
-                        self.model = ModelWithTemperature(self.model, self.device, self.num_bins)
+                        self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
 
-                    self.model.calibrate(self.lrpp, self.max_iter, val_experiences_list)
+                    self.strategy.model.calibrate(self.lrpp, self.max_iter, val_experiences_list)
 
+                    # for parameters in self.strategy.model.parameters():
+                    #     print(parameters.size())
+                    #     print(parameters)
                 print('Computing accuracy on the whole test set')
                 # test also returns a dictionary which contains all the metric values
                 results.append(self.strategy.eval(self.benchmark.test_stream))
-                th.save(self.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
+                th.save(self.strategy.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
             else:
                 buffer_val = None
                 weights_pre_exp = None
                 bias_pre_exp = None
                 temperature_pre_exp = None
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
-                    print("Start of experience: ", experience_tr.current_experience)
+                    print("############### Start of experience: ", experience_tr.current_experience)
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
 
                     # train returns a dictionary which contains all the metric values
                     self.strategy.train(experience_tr, eval_streams=[experience_val])
                     print('Training completed')
 
-                    if self.pp_calibration_mode:
+                    if self.pp_calibration_mode and experience_tr.current_experience == 0:
                         if self.pp_cal_vector_scaling:
-                            self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, True)
-                            if experience_tr.current_experience > 0:
-                                self.model.weights_init(weights_pre_exp, bias_pre_exp)
+                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
                         elif self.pp_cal_matrix_scaling:
-                            self.model = MatrixAndVectorScaling(self.model, self.device, self.num_classes, self.num_bins)
-                            if experience_tr.current_experience > 0:
-                                self.model.weights_init(weights_pre_exp, bias_pre_exp)
+                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
                         else:
-                            self.model = ModelWithTemperature(self.model, self.device, self.num_bins)
-                            if experience_tr.current_experience > 0:
-                                self.model.temperature_init(temperature_pre_exp)
+                            self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
 
-                        experience_val_data = make_classification_dataset(experience_val.dataset)
-                        if buffer_val and self.pp_cal_mixed_data:
-                            buffer_length = len(experience_val_data)
-                            indices = list(range(buffer_length))
-                            np.random.shuffle(indices)
-                            val_split_index = int(np.floor(0.4 * buffer_length))
-                            new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
-                            buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
-                        else:
-                            buffer_val = experience_val_data
+                    experience_val_data = make_classification_dataset(experience_val.dataset)
+                    if buffer_val and self.pp_cal_mixed_data:
+                        buffer_length = len(experience_val_data)
+                        indices = list(range(buffer_length))
+                        np.random.shuffle(indices)
+                        val_split_index = int(np.floor(0.4 * buffer_length))
+                        new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
+                        buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
+                    else:
+                        buffer_val = experience_val_data
 
-                        print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
-                        self.model.calibrate(self.lrpp, self.max_iter, buffer_val)
+                    print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
+                    self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
 
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
@@ -206,19 +206,8 @@ class Continual_Calibration:
 
                     # store model after each experience
                     th.save(
-                        self.model.state_dict(),
+                        self.strategy.model.state_dict(),
                         f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}_exp{experience_tr.current_experience}.pt"
                     )
-
-                    if self.pp_calibration_mode:
-                        if self.pp_cal_vector_scaling or self.pp_cal_matrix_scaling:
-                            weights_pre_exp = self.model.weights
-                            bias_pre_exp = self.model.bias
-                        else:
-                            temperature_pre_exp = self.model.temperature
-                        self.model = copy.deepcopy(self.model.model)
-                        if self.model:
-                            for param in self.model.parameters():
-                                param.requires_grad = True
 
             return results

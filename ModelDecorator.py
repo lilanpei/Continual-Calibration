@@ -20,16 +20,10 @@ class ModelWithTemperature(nn.Module):
     def __init__(self, model, device, num_bins):
         super(ModelWithTemperature, self).__init__()
         self.model = copy.deepcopy(model)
-        if self.model:
-            for param in self.model.parameters():
-                param.requires_grad = False
         self.device = device
         self.num_bins = num_bins
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 
-    def temperature_init(self, temperature):
-        print("@@@@@@@@@__temperature_init__",temperature.data)
-        self.temperature.data.copy_(temperature.data)
 
     def forward(self, input):
         logits = self.model(input)
@@ -49,6 +43,10 @@ class ModelWithTemperature(nn.Module):
         We're going to set it to optimize ExperienceECE.
         experience_val : validation experience
         """
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = False
+
         optimizer = optim.LBFGS([self.temperature], lr=lrpp, max_iter=max_iter)
         logits_list = []
         labels_list = []
@@ -83,6 +81,9 @@ class ModelWithTemperature(nn.Module):
         print('##### Optimal temperature: %.3f' % self.temperature.data)
         print('##### After temperature - NLL: %.3f, ECE: %.3f' % (after_temperature_nll, after_temperature_ece_metric))
         ece_metric.reset()
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = True       
 
         return self
 
@@ -91,28 +92,33 @@ class MatrixAndVectorScaling(nn.Module):
     def __init__(self, model, device, num_classes, num_bins, vector_scaling=False):
         super(MatrixAndVectorScaling, self).__init__()
         self.model = copy.deepcopy(model)
-        if self.model:
-            for param in self.model.parameters():
-                param.requires_grad = False
         self.device = device
         self.num_bins = num_bins
         self.vector_scaling = vector_scaling
         self.weights = nn.Parameter(th.ones(num_classes, num_classes))
         self.bias = nn.Parameter(th.zeros(num_classes))
 
-    def weights_init(self, weights, bias):
-        print("@@@@@@@@@__weights_init__", weights.data, bias.data)
-        self.weights.data.copy_(weights.data)
-        self.bias.data.copy_(bias.data)
-
-    def forward(self, logits):
+    def linear(self, logits):
         if self.vector_scaling:
             return logits.to(self.device) * th.diag(self.weights.to(self.device)) + self.bias.to(self.device)
         else:
             bias = self.bias.unsqueeze(0).expand(logits.size(0), -1)
             return th.matmul(logits.to(self.device), self.weights.to(self.device)) + bias.to(self.device)
+        
+    def forward(self, input):
+        logits = self.model(input)
+        return self.linear(logits)
 
     def calibrate(self, lrpp, max_iter, experience_val):
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = False
+
+        # print(self.weights,self.bias)
+        # for parameters in self.model.parameters():
+        #     print(parameters.size())
+        #     print(parameters)
+
         optimizer = optim.LBFGS([self.weights, self.bias], lr=lrpp, max_iter=max_iter)
         logits_list = []
         labels_list = []
@@ -135,16 +141,24 @@ class MatrixAndVectorScaling(nn.Module):
 
         def eval():
             optimizer.zero_grad()
-            loss = nll_criterion(self.forward(logits), labels)
+            loss = nll_criterion(self.linear(logits), labels)
             loss.backward()
             return loss
         optimizer.step(eval)
 
         # Calculate NLL and ECE after scaling
-        after_calibration_nll = nll_criterion(self.forward(logits), labels).item()
-        ece_metric.update(self.forward(logits), labels)
+        after_calibration_nll = nll_criterion(self.linear(logits), labels).item()
+        ece_metric.update(self.linear(logits), labels)
         after_calibration_ece_metric = ece_metric.result()
         print('##### After calibration - NLL: %.3f, ECE: %.3f' % (after_calibration_nll, after_calibration_ece_metric))
         ece_metric.reset()
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = True   
+
+        # print(self.weights,self.bias)
+        # for parameters in self.model.parameters():
+        #     print(parameters.size())
+        #     print(parameters)
 
         return self
