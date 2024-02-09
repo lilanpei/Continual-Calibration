@@ -178,27 +178,28 @@ class Continual_Calibration:
                     self.strategy.train(experience_tr, eval_streams=[experience_val])
                     print('Training completed')
 
-                    if self.pp_calibration_mode and experience_tr.current_experience == 0:
-                        if self.pp_cal_vector_scaling:
-                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
-                        elif self.pp_cal_matrix_scaling:
-                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
+                    if self.pp_calibration_mode:
+                        if experience_tr.current_experience == 0:
+                            if self.pp_cal_vector_scaling:
+                                self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
+                            elif self.pp_cal_matrix_scaling:
+                                self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
+                            else:
+                                self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
+
+                        experience_val_data = make_classification_dataset(experience_val.dataset)
+                        if buffer_val and self.pp_cal_mixed_data:
+                            buffer_length = len(experience_val_data)
+                            indices = list(range(buffer_length))
+                            np.random.shuffle(indices)
+                            val_split_index = int(np.floor(0.4 * buffer_length))
+                            new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
+                            buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
                         else:
-                            self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
+                            buffer_val = experience_val_data
 
-                    experience_val_data = make_classification_dataset(experience_val.dataset)
-                    if buffer_val and self.pp_cal_mixed_data:
-                        buffer_length = len(experience_val_data)
-                        indices = list(range(buffer_length))
-                        np.random.shuffle(indices)
-                        val_split_index = int(np.floor(0.4 * buffer_length))
-                        new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
-                        buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
-                    else:
-                        buffer_val = experience_val_data
-
-                    print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
-                    self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
+                        print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
+                        self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
 
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
