@@ -104,6 +104,7 @@ class MatrixAndVectorScaling(nn.Module):
         self.device = device
         self.num_bins = num_bins
         self.vector_scaling = vector_scaling
+        self.model.eval()
         self.weights = nn.Parameter(th.ones(num_classes, num_classes))
         self.bias = nn.Parameter(th.zeros(num_classes))
 
