@@ -137,8 +137,8 @@ class Continual_Calibration:
             for exp in self.benchmark.valid_stream:
                 if isinstance(exp, Iterable):
                     val_experiences_list.extend(exp.dataset)
-            else:
-                val_experiences_list.append(exp.dataset)
+                else:
+                    val_experiences_list.append(exp.dataset)
             val_experiences_list = AvalancheDataset(val_experiences_list)
 
             if self.strategy_name == "JointTraining":
@@ -167,9 +167,9 @@ class Continual_Calibration:
                 th.save(self.strategy.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
             else:
                 buffer_val = None
-                weights_pre_exp = None
-                bias_pre_exp = None
-                temperature_pre_exp = None
+                # weights_pre_exp = None
+                # bias_pre_exp = None
+                # temperature_pre_exp = None
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
                     print("############### Start of experience: ", experience_tr.current_experience)
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
@@ -178,27 +178,27 @@ class Continual_Calibration:
                     self.strategy.train(experience_tr, eval_streams=[experience_val])
                     print('Training completed')
 
-                    if self.pp_calibration_mode and experience_tr.current_experience == 0:
-                        if self.pp_cal_vector_scaling:
-                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
-                        elif self.pp_cal_matrix_scaling:
-                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
-                        else:
-                            self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
-
-                    experience_val_data = make_classification_dataset(experience_val.dataset)
-                    if buffer_val and self.pp_cal_mixed_data:
-                        buffer_length = len(experience_val_data)
-                        indices = list(range(buffer_length))
-                        np.random.shuffle(indices)
-                        val_split_index = int(np.floor(0.4 * buffer_length))
-                        new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
-                        buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
-                    else:
-                        buffer_val = experience_val_data
-
-                    print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
                     if self.pp_calibration_mode:
+                        if experience_tr.current_experience == 0:
+                            if self.pp_cal_vector_scaling:
+                                self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
+                            elif self.pp_cal_matrix_scaling:
+                                self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
+                            else:
+                                self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
+
+                        experience_val_data = make_classification_dataset(experience_val.dataset)
+                        if buffer_val and self.pp_cal_mixed_data:
+                            buffer_length = len(experience_val_data)
+                            indices = list(range(buffer_length))
+                            np.random.shuffle(indices)
+                            val_split_index = int(np.floor(0.4 * buffer_length))
+                            new_buffer = AvalancheSubset(experience_val_data, indices[:val_split_index])
+                            buffer_val = AvalancheConcatDataset([new_buffer, buffer_val])
+                        else:
+                            buffer_val = experience_val_data
+
+                        # print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
                         self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
 
                     print('Computing accuracy on the whole test set')

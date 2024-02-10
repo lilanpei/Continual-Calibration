@@ -22,6 +22,7 @@ class ModelWithTemperature(nn.Module):
         self.model = copy.deepcopy(model)
         self.device = device
         self.num_bins = num_bins
+        self.model.eval()
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 
 
@@ -46,6 +47,11 @@ class ModelWithTemperature(nn.Module):
         if self.model:
             for param in self.model.parameters():
                 param.requires_grad = False
+
+        # print(self.temperature)
+        # for parameters in self.model.parameters():
+        #     print(parameters.size())
+        #     print(parameters)
 
         optimizer = optim.LBFGS([self.temperature], lr=lrpp, max_iter=max_iter)
         logits_list = []
@@ -84,7 +90,10 @@ class ModelWithTemperature(nn.Module):
         if self.model:
             for param in self.model.parameters():
                 param.requires_grad = True       
-
+        # print(self.temperature)
+        # for parameters in self.model.parameters():
+        #     print(parameters.size())
+        #     print(parameters)
         return self
 
 
@@ -95,6 +104,7 @@ class MatrixAndVectorScaling(nn.Module):
         self.device = device
         self.num_bins = num_bins
         self.vector_scaling = vector_scaling
+        self.model.eval()
         self.weights = nn.Parameter(th.ones(num_classes, num_classes))
         self.bias = nn.Parameter(th.zeros(num_classes))
 
@@ -154,7 +164,7 @@ class MatrixAndVectorScaling(nn.Module):
         ece_metric.reset()
         if self.model:
             for param in self.model.parameters():
-                param.requires_grad = True   
+                param.requires_grad = True
 
         # print(self.weights,self.bias)
         # for parameters in self.model.parameters():
