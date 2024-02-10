@@ -3,8 +3,9 @@ import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD, Adam, AdamW
 import torch.nn as nn
+from torch.optim import SGD, Adam, AdamW
+from torch.optim.lr_scheduler import MultiStepLR
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torchvision import transforms, models
@@ -220,6 +221,7 @@ if __name__ == "__main__":
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         model_name = "ResNet110"
         num_classes = 100
+        milestones=[60, 120, 160]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -247,6 +249,8 @@ if __name__ == "__main__":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
         model_name = "NatureDQNNetwork"
+        num_classes = 18
+        milestones = None
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
@@ -259,10 +263,12 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=5e-4)
-
-    sched = LRSchedulerPlugin(CosineAnnealingWarmRestarts(optimizer, T_0=args.T0, T_mult=1, eta_min=1e-5))
-    plugins.append(sched)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    if milestones:
+        sched = LRSchedulerPlugin(
+                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+                )
+        plugins.append(sched)
 
     ent_weight = args.ent_weight
     if args.early_stopping:

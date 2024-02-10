@@ -198,7 +198,8 @@ class Continual_Calibration:
                         buffer_val = experience_val_data
 
                     print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
-                    self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
+                    if self.pp_calibration_mode:
+                        self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
 
                     print('Computing accuracy on the whole test set')
                     # test also returns a dictionary which contains all the metric values
