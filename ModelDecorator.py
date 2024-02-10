@@ -22,6 +22,7 @@ class ModelWithTemperature(nn.Module):
         self.model = copy.deepcopy(model)
         self.device = device
         self.num_bins = num_bins
+        self.model.eval()
         self.temperature = nn.Parameter(th.ones(1)) # * 1.5)
 
 
