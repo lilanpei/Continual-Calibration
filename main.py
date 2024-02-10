@@ -1,9 +1,9 @@
-import os
+# import os
 import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD, Adam, AdamW
+from torch.optim import AdamW#, Adam, SGD
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
@@ -234,8 +234,8 @@ if __name__ == "__main__":
             eurosat_test,
             5,
             task_labels=False,
-            seed=1234,
-            fixed_class_order=[i for i in range(10)],
+            # seed=1234,
+            # fixed_class_order=[i for i in range(10)],
         )
         model = models.resnet50()
         num_ftrs = model.fc.in_features
@@ -305,7 +305,7 @@ if __name__ == "__main__":
             calibration_mode = calibration_mode + "_MixedData"
     else:
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
-    
+
     calibration_mode += args.version
 
     # log to Tensorboard

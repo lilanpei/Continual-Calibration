@@ -137,8 +137,8 @@ class Continual_Calibration:
             for exp in self.benchmark.valid_stream:
                 if isinstance(exp, Iterable):
                     val_experiences_list.extend(exp.dataset)
-            else:
-                val_experiences_list.append(exp.dataset)
+                else:
+                    val_experiences_list.append(exp.dataset)
             val_experiences_list = AvalancheDataset(val_experiences_list)
 
             if self.strategy_name == "JointTraining":
@@ -167,9 +167,9 @@ class Continual_Calibration:
                 th.save(self.strategy.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
             else:
                 buffer_val = None
-                weights_pre_exp = None
-                bias_pre_exp = None
-                temperature_pre_exp = None
+                # weights_pre_exp = None
+                # bias_pre_exp = None
+                # temperature_pre_exp = None
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
                     print("############### Start of experience: ", experience_tr.current_experience)
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
@@ -198,7 +198,7 @@ class Continual_Calibration:
                         else:
                             buffer_val = experience_val_data
 
-                        print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
+                        # print("!!!!!!! VAL Classes: !!!!!!!", experience_val.previous_classes, experience_val.classes_in_this_experience, len(buffer_val))
                         self.strategy.model.calibrate(self.lrpp, self.max_iter, buffer_val)
 
                     print('Computing accuracy on the whole test set')

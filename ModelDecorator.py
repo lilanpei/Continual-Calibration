@@ -47,6 +47,11 @@ class ModelWithTemperature(nn.Module):
             for param in self.model.parameters():
                 param.requires_grad = False
 
+        # print(self.temperature)
+        # for parameters in self.model.parameters():
+        #     print(parameters.size())
+        #     print(parameters)
+
         optimizer = optim.LBFGS([self.temperature], lr=lrpp, max_iter=max_iter)
         logits_list = []
         labels_list = []
@@ -84,7 +89,10 @@ class ModelWithTemperature(nn.Module):
         if self.model:
             for param in self.model.parameters():
                 param.requires_grad = True       
-
+        # print(self.temperature)
+        # for parameters in self.model.parameters():
+        #     print(parameters.size())
+        #     print(parameters)
         return self
 
 
@@ -154,7 +162,7 @@ class MatrixAndVectorScaling(nn.Module):
         ece_metric.reset()
         if self.model:
             for param in self.model.parameters():
-                param.requires_grad = True   
+                param.requires_grad = True
 
         # print(self.weights,self.bias)
         # for parameters in self.model.parameters():
