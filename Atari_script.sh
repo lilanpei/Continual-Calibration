@@ -31,16 +31,24 @@
 
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_1.log 2>&1 &
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_2.log 2>&1 &
-nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_3.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 0 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppms > jointcma_3.log 2>&1 &
 
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_11.log 2>&1 &
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_22.log 2>&1 &
-nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_33.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 0 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppms > jointcma_33.log 2>&1 &
 
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_1.log 2>&1 &
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_2.log 2>&1 &
-nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_3.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 0 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat1" -lrpp 0.3 -mi 500 -ppcm -ppvs > jointcva_3.log 2>&1 &
 
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_11.log 2>&1 &
 nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_22.log 2>&1 &
-nohup python main.py -sn "JointTraining" -dn "Atari" -v 3 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_33.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 0 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_vetmat2" -lrpp 0.01 -mi 500 -ppcm -ppvs > jointcva_33.log 2>&1 &
+
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_temp" -lrpp 0.01 -mi 500 -ppcm > jointca_1.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_temp" -lrpp 0.01 -mi 500 -ppcm > jointca_2.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 0 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_temp" -lrpp 0.01 -mi 500 -ppcm > jointca_3.log 2>&1 &
+
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 1 -cid 1 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_temp2" -lrpp 0.3 -mi 500 -ppcm > jointca_11.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 2 -cid 2 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_temp2" -lrpp 0.3 -mi 500 -ppcm > jointca_22.log 2>&1 &
+nohup python main.py -sn "JointTraining" -dn "Atari" -v 0 -cid 3 -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_temp2" -lrpp 0.3 -mi 500 -ppcm > jointca_33.log 2>&1 &
