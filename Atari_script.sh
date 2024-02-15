@@ -104,52 +104,52 @@
 # nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_ST" -stcm --ent_weight 0.005 > n5.log 2>&1 &
 # nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_ST" -stcm --ent_weight 0.005 > n6.log 2>&1 &
 
-# nohup python main.py -v 1 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS" -lrpp 0.01 -mi 100 -ppcm -ppms > jointcms_1.log 2>&1 &
-# nohup python main.py -v 2 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS" -lrpp 0.01 -mi 100 -ppcm -ppms > jointcms_2.log 2>&1 &
-# nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS" -lrpp 0.01 -mi 100 -ppcm -ppms > jointcms_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS" -lrpp 0.01 -mi 100 -ppcm -ppms > naivecms_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS" -lrpp 0.01 -mi 100 -ppcm -ppms > naivecms_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS" -lrpp 0.01 -mi 100 -ppcm -ppms > naivecms_3.log 2>&1 &
 
-# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS" -lrpp 0.01 -mi 100 -ppcm -ppvs > jointcvs_1.log 2>&1 &
-# nohup python main.py -v 2 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS" -lrpp 0.01 -mi 100 -ppcm -ppvs > jointcvs_2.log 2>&1 &
-# nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS" -lrpp 0.01 -mi 100 -ppcm -ppvs > jointcvs_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS" -lrpp 0.01 -mi 100 -ppcm -ppvs > naivecvs_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS" -lrpp 0.01 -mi 100 -ppcm -ppvs > naivecvs_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS" -lrpp 0.01 -mi 100 -ppcm -ppvs > naivecvs_3.log 2>&1 &
 
-# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS" -lrpp 0.01 -mi 100 -ppcm > jointcts_1.log 2>&1 &
-# nohup python main.py -v 2 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS" -lrpp 0.01 -mi 100 -ppcm > jointcts_2.log 2>&1 &
-# nohup python main.py -v 3 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS" -lrpp 0.01 -mi 100 -ppcm > jointcts_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS" -lrpp 0.01 -mi 100 -ppcm > naivects_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS" -lrpp 0.01 -mi 100 -ppcm > naivects_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS" -lrpp 0.01 -mi 100 -ppcm > naivects_3.log 2>&1 &
 
-# nohup python main.py -v 1 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS2" -lrpp 0.001 -mi 100 -ppcm -ppms > jointcms2_1.log 2>&1 &
-# nohup python main.py -v 2 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS2" -lrpp 0.001 -mi 100 -ppcm -ppms > jointcms2_2.log 2>&1 &
-# nohup python main.py -v 3 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS2" -lrpp 0.001 -mi 100 -ppcm -ppms > jointcms2_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS2" -lrpp 0.001 -mi 100 -ppcm -ppms > naivecms2_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS2" -lrpp 0.001 -mi 100 -ppcm -ppms > naivecms2_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS2" -lrpp 0.001 -mi 100 -ppcm -ppms > naivecms2_3.log 2>&1 &
 
-# nohup python main.py -v 1 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS2" -lrpp 0.001 -mi 100 -ppcm -ppvs > jointcvs2_1.log 2>&1 &
-# nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS2" -lrpp 0.001 -mi 100 -ppcm -ppvs > jointcvs2_2.log 2>&1 &
-# nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS2" -lrpp 0.001 -mi 100 -ppcm -ppvs > jointcvs2_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS2" -lrpp 0.001 -mi 100 -ppcm -ppvs > naivecvs2_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS2" -lrpp 0.001 -mi 100 -ppcm -ppvs > naivecvs2_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS2" -lrpp 0.001 -mi 100 -ppcm -ppvs > naivecvs2_3.log 2>&1 &
 
-# nohup python main.py -v 1 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS2" -lrpp 0.001 -mi 100 -ppcm > jointcts2_1.log 2>&1 &
-# nohup python main.py -v 2 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS2" -lrpp 0.001 -mi 100 -ppcm > jointcts2_2.log 2>&1 &
-# nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS2" -lrpp 0.001 -mi 100 -ppcm > jointcts2_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS2" -lrpp 0.001 -mi 100 -ppcm > naivects2_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS2" -lrpp 0.001 -mi 100 -ppcm > naivects2_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS2" -lrpp 0.001 -mi 100 -ppcm > naivects2_3.log 2>&1 &
 
 # -----------
 
-nohup python main.py -v 1 -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_MS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_1.log 2>&1 &
-nohup python main.py -v 2 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_MS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_2.log 2>&1 &
-nohup python main.py -v 3 -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_MS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_MS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_MS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_MS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_3.log 2>&1 &
 
-nohup python main.py -v 1 -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_VS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppvs > jointcvs_1.log 2>&1 &
-nohup python main.py -v 2 -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_VS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppvs > jointcvs_2.log 2>&1 &
-nohup python main.py -v 3 -cid 1 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_VS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppvs > jointcvs_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_VS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppvs > jointcvs_md_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_VS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppvs > jointcvs_md_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_VS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm -ppvs > jointcvs_md_3.log 2>&1 &
 
-nohup python main.py -v 1 -cid 2 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_TS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm > jointcts_1.log 2>&1 &
-nohup python main.py -v 2 -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_TS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm > jointcts_2.log 2>&1 &
-nohup python main.py -v 3 -cid 0 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_TS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm > jointcts_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_TS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm > jointcts_md_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_TS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm > jointcts_md_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 3 -sn "Replay" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_R_TS_MD" --mem_size 4000 -lrpp 0.01 -mi 100 -ppcm -ppdm > jointcts_md_3.log 2>&1 &
 
-nohup python main.py -v 1 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm > jointcts2_1.log 2>&1 &
-nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm > jointcts2_2.log 2>&1 &
-nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm > jointcts2_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm > jointcts2_md_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm > jointcts2_md_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_TS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm > jointcts2_md_3.log 2>&1 &
 
-nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm -ppvs > jointcvs2_1.log 2>&1 &
-nohup python main.py -v 2 -cid 1 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm -ppvs > jointcvs2_2.log 2>&1 &
-nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm -ppvs > jointcvs2_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm -ppvs > jointcvs2_md_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm -ppvs > jointcvs2_md_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_VS_MD" -lrpp 0.001 -mi 100 -ppcm -ppdm -ppvs > jointcvs2_md_3.log 2>&1 &
 
-nohup python main.py -v 1 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_1.log 2>&1 &
-nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_2.log 2>&1 &
-nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_3.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_1.log 2>&1 &
+# nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_2.log 2>&1 &
+# nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_3.log 2>&1 &
