@@ -25,6 +25,7 @@ from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
 from atari_dataset import generate_atari_benchmark
 from DQN_model import DQNModel
+from ResNet18 import resnet18
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -218,10 +219,11 @@ if __name__ == "__main__":
         batch_size_mem = None
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
-        model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
-        model_name = "ResNet110"
+        # model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         num_classes = 100
-        milestones=[60, 120, 160]
+        model = resnet18(num_classes)
+        model_name = "ResNet18"
+        milestones=[35, 45]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -263,10 +265,11 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    # optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
     if milestones:
         sched = LRSchedulerPlugin(
-                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+                    MultiStepLR(optimizer, milestones=milestones, gamma=0.1) #learning rate decay
                 )
         plugins.append(sched)
 
