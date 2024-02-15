@@ -56,23 +56,47 @@
 
 # ----
 
-nohup python main.py -v 1 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 > d1.log 2>&1 &
-nohup python main.py -v 2 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 > d2.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 -bsm 1000 > d1.log 2>&1 &
+# nohup python main.py -v 2 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 -bsm 1000 > d2.log 2>&1 &
 
-nohup python main.py -v 3 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.03 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 > d3.log 2>&1 &
-nohup python main.py -v 4 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.03 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 > d4.log 2>&1 &
+# nohup python main.py -v 3 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.03 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 > d3.log 2>&1 &
+# nohup python main.py -v 4 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.03 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 0.5 > d4.log 2>&1 &
 
-nohup python main.py -v 13 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 1 > d13.log 2>&1 &
-nohup python main.py -v 14 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 1 > d14.log 2>&1 &
+# nohup python main.py -v 13 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 1 > d13.log 2>&1 &
+# nohup python main.py -v 14 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.1 -b 1 > d14.log 2>&1 &
 
-nohup python main.py -v 5 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 0.5 > d5.log 2>&1 &
-nohup python main.py -v 6 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 0.5 > d6.log 2>&1 &
+# nohup python main.py -v 5 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 0.5 -bsm 1000 > d5.log 2>&1 &
+# nohup python main.py -v 6 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 0.5 -bsm 1000 > d6.log 2>&1 &
 
-nohup python main.py -v 7 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 1 > d7.log 2>&1 &
-nohup python main.py -v 8 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 1 > d8.log 2>&1 &
+# nohup python main.py -v 7 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 1 > d7.log 2>&1 &
+# nohup python main.py -v 8 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.2 -b 1 > d8.log 2>&1 &
 
-nohup python main.py -v 9 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 0.5 > d9.log 2>&1 &
-nohup python main.py -v 10 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 0.5 > d10.log 2>&1 &
+# nohup python main.py -v 9 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 0.5 > d9.log 2>&1 &
+# nohup python main.py -v 10 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 0.5 > d10.log 2>&1 &
 
-nohup python main.py -v 11 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 1 > d11.log 2>&1 &
-nohup python main.py -v 12 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 1 > d12.log 2>&1 &
+# nohup python main.py -v 11 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 1 > d11.log 2>&1 &
+# nohup python main.py -v 12 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_hp" -a 0.5 -b 1 > d12.log 2>&1 &
+
+# ----
+
+# nohup python main.py -v 1 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.1 -b 0.5 > d1.log 2>&1 &
+# nohup python main.py -v 2 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.1 -b 0.5 -bsm 500 > d2.log 2>&1 &
+# nohup python main.py -v 3 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.1 -b 0.5 -bsm 1000 > d3.log 2>&1 &
+# nohup python main.py -v 4 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.1 -b 0.5 -bsm 2000 > d4.log 2>&1 &
+# nohup python main.py -v 5 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.1 -b 0.5 -bsm 4000 > d5.log 2>&1 &
+
+# nohup python main.py -v 6 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.2 -b 0.5 > d11.log 2>&1 &
+# nohup python main.py -v 7 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.2 -b 0.5 -bsm 500 > d12.log 2>&1 &
+# nohup python main.py -v 8 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.2 -b 0.5 -bsm 1000 > d13.log 2>&1 &
+# nohup python main.py -v 9 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.2 -b 0.5 -bsm 2000 > d14.log 2>&1 &
+# nohup python main.py -v 10 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 128 -es 128 -tp 200 -lr 0.01 -ep -p 10 --logdir "./logs/SplitCIFAR100_DER_mem" -a 0.2 -b 0.5 -bsm 4000 > d15.log 2>&1 &
+
+# ----
+
+nohup python main.py -v 1 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 32 -es 32 -tp 50 -lr 0.03 --logdir "./logs/SplitCIFAR100_DER_500_2" -ms 500 -a 0.1 -b 0.5 -bsm 32 > d1.log 2>&1 &
+nohup python main.py -v 2 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 32 -es 32 -tp 50 -lr 0.03 --logdir "./logs/SplitCIFAR100_DER_500_2" -ms 500 -a 0.1 -b 0.5 -bsm 32 > d2.log 2>&1 &
+nohup python main.py -v 3 -cid 2 -sn "DER" -dn "SplitCIFAR100" -ts 32 -es 32 -tp 50 -lr 0.03 --logdir "./logs/SplitCIFAR100_DER_500_2" -ms 500 -a 0.1 -b 0.5 -bsm 32 > d3.log 2>&1 &
+
+nohup python main.py -v 1 -cid 3 -sn "DER" -dn "SplitCIFAR100" -ts 32 -es 32 -tp 50 -lr 0.03 --logdir "./logs/SplitCIFAR100_DER_2000_2" -ms 2000 -a 0.1 -b 0.5 -bsm 32 > d4.log 2>&1 &
+nohup python main.py -v 2 -cid 0 -sn "DER" -dn "SplitCIFAR100" -ts 32 -es 32 -tp 50 -lr 0.03 --logdir "./logs/SplitCIFAR100_DER_2000_2" -ms 2000 -a 0.1 -b 0.5 -bsm 32 > d5.log 2>&1 &
+nohup python main.py -v 3 -cid 1 -sn "DER" -dn "SplitCIFAR100" -ts 32 -es 32 -tp 50 -lr 0.03 --logdir "./logs/SplitCIFAR100_DER_2000_2" -ms 2000 -a 0.1 -b 0.5 -bsm 32 > d6.log 2>&1 &
