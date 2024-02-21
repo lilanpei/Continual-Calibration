@@ -153,3 +153,60 @@
 # nohup python main.py -v 1 -cid 0 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_1.log 2>&1 &
 # nohup python main.py -v 2 -cid 2 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_2.log 2>&1 &
 # nohup python main.py -v 3 -cid 3 -sn "Naive" -dn "Atari" -ts 256 -es 256 -tp 200 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_N_MS_MD" -lrpp 0.01 -mi 100 -ppcm -ppdm -ppms > jointcms_md_3.log 2>&1 &
+
+# -----------
+
+# nohup python main.py -v 1 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.1 -b 0.5 -bsm 32 > d4.log 2>&1 &
+# nohup python main.py -v 2 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.1 -b 0.5 -bsm 32 > d5.log 2>&1 &
+# nohup python main.py -v 3 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.1 -b 0.5 -bsm 32 > d6.log 2>&1 &
+
+# nohup python main.py -v 4 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.1 -b 0.8 -bsm 32 > d44.log 2>&1 &
+# nohup python main.py -v 5 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.1 -b 0.8 -bsm 32 > d55.log 2>&1 &
+# nohup python main.py -v 6 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.1 -b 0.8 -bsm 32 > d66.log 2>&1 &
+
+# nohup python main.py -v 7 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.2 -b 0.5 -bsm 32 > d4.log 2>&1 &
+# nohup python main.py -v 8 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.2 -b 0.5 -bsm 32 > d5.log 2>&1 &
+# nohup python main.py -v 9 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.2 -b 0.5 -bsm 32 > d6.log 2>&1 &
+
+# nohup python main.py -v 10 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.2 -b 0.8 -bsm 32 > d44.log 2>&1 &
+# nohup python main.py -v 11 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.2 -b 0.8 -bsm 32 > d55.log 2>&1 &
+# nohup python main.py -v 12 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.2 -b 0.8 -bsm 32 > d66.log 2>&1 &
+
+# nohup python main.py -v 13 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.3 -b 0.5 -bsm 32 > d444.log 2>&1 &
+# nohup python main.py -v 14 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.3 -b 0.5 -bsm 32 > d555.log 2>&1 &
+# nohup python main.py -v 15 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.3 -b 0.5 -bsm 32 > d666.log 2>&1 &
+
+# nohup python main.py -v 16 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.3 -b 0.8 -bsm 32 > d4444.log 2>&1 &
+# nohup python main.py -v 17 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.3 -b 0.8 -bsm 32 > d5555.log 2>&1 &
+# nohup python main.py -v 18 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.3 -b 0.8 -bsm 32 > d6666.log 2>&1 &
+
+# nohup python main.py -v 19 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.5 -b 0.5 -bsm 32 > d44444.log 2>&1 &
+# nohup python main.py -v 20 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.5 -b 0.5 -bsm 32 > d55555.log 2>&1 &
+# nohup python main.py -v 21 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.5 -b 0.5 -bsm 32 > d66666.log 2>&1 &
+
+# nohup python main.py -v 22 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.5 -b 0.8 -bsm 32 > d444444.log 2>&1 &
+# nohup python main.py -v 23 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.5 -b 0.8 -bsm 32 > d555555.log 2>&1 &
+# nohup python main.py -v 24 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 2000 -a 0.5 -b 0.8 -bsm 32 > d666666.log 2>&1 &
+
+# nohup python main.py -v 25 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 4000 -a 0.5 -b 0.5 -bsm 32 > adb1.log 2>&1 &
+# nohup python main.py -v 26 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 4000 -a 0.5 -b 0.5 -bsm 32 > adb11.log 2>&1 &
+# nohup python main.py -v 27 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_HP" -ms 4000 -a 0.5 -b 0.5 -bsm 32 > adb111.log 2>&1 &
+
+# -------
+
+# nohup python main.py -v 1 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.1 > ad1.log 2>&1 &
+# nohup python main.py -v 1 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.075 > ad2.log 2>&1 &
+# nohup python main.py -v 1 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.05 > ad3.log 2>&1 &
+# nohup python main.py -v 1 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.025 > ad4.log 2>&1 &
+# nohup python main.py -v 1 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.01 > ad5.log 2>&1 &
+# nohup python main.py -v 1 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.0075 > ad6.log 2>&1 &
+# nohup python main.py -v 1 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.005 > ad7.log 2>&1 &
+# nohup python main.py -v 1 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.0025 > ad8.log 2>&1 &
+
+# -------
+
+nohup python main.py -v 2 -cid 0 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.025 > ad4.log 2>&1 &
+nohup python main.py -v 3 -cid 1 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.025 > ad4.log 2>&1 &
+
+nohup python main.py -v 2 -cid 2 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.0025 > ad8.log 2>&1 &
+nohup python main.py -v 3 -cid 3 -sn "DER" -dn "Atari" -ts 256 -es 256 -tp 100 -lr 0.0005 -ep -p 10 --logdir "./logs/Atari_D_ST" -ms 2000 -a 0.5 -b 0.5 -bsm 32 -stcm --ent_weight 0.0025 > ad8.log 2>&1 &
