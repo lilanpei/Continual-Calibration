@@ -12,7 +12,7 @@ from torchvision import transforms, models
 from torchvision.datasets import EuroSAT
 from torchvision.transforms import ToTensor
 from avalanche.benchmarks import nc_benchmark
-from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
+from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100, SplitTinyImageNet
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
@@ -220,6 +220,7 @@ if __name__ == "__main__":
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         # model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
+        # model_name = "ResNet110"
         num_classes = 100
         model = resnet18(num_classes)
         model_name = "ResNet18"
@@ -241,23 +242,33 @@ if __name__ == "__main__":
             # seed=1234,
             # fixed_class_order=[i for i in range(10)],
         )
-        model = models.resnet50()
-        num_ftrs = model.fc.in_features
-        model.fc = nn.Linear(num_ftrs, 10)
-        model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
-        model_name = "ResNet50"
+        # model = models.resnet50()
+        # num_ftrs = model.fc.in_features
+        # model.fc = nn.Linear(num_ftrs, 10)
+        # model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
+        # model_name = "ResNet50"
         num_classes = 10
+        model = resnet18(num_classes)
+        model_name = "ResNet18"
+        milestones=[35, 45]
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
         model_name = "NatureDQNNetwork"
         num_classes = 18
         milestones = None
+    elif args.dataset_name == "TinyImageNet":
+        benchmark = SplitTinyImageNet(n_experiences=10)
+        num_classes = 200
+        model = resnet18(num_classes)
+        model_name = "ResNet18"
+        milestones = None
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
         num_classes = 10
+        milestones = None
 
     foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
