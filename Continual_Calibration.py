@@ -167,9 +167,9 @@ class Continual_Calibration:
                 th.save(self.strategy.model.state_dict(), f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}.pt")
             else:
                 buffer_val = None
-                # weights_pre_exp = None
-                # bias_pre_exp = None
-                # temperature_pre_exp = None
+                weights_pre_exp = None
+                bias_pre_exp = None
+                temperature_pre_exp = None
                 for experience_tr, experience_val in zip(self.benchmark.train_stream, self.benchmark.valid_stream):
                     print("############### Start of experience: ", experience_tr.current_experience)
                     print("Current Classes: ", experience_tr.classes_in_this_experience)
@@ -179,13 +179,19 @@ class Continual_Calibration:
                     print('Training completed')
 
                     if self.pp_calibration_mode:
-                        if experience_tr.current_experience == 0:
-                            if self.pp_cal_vector_scaling:
-                                self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
-                            elif self.pp_cal_matrix_scaling:
-                                self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
-                            else:
-                                self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
+                        # if experience_tr.current_experience == 0:
+                        if self.pp_cal_vector_scaling:
+                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, True)
+                            if experience_tr.current_experience > 0:
+                                self.strategy.model.weights_init(weights_pre_exp, bias_pre_exp)
+                        elif self.pp_cal_matrix_scaling:
+                            self.strategy.model = MatrixAndVectorScaling(self.strategy.model, self.device, self.num_classes, self.num_bins)
+                            if experience_tr.current_experience > 0:
+                                self.strategy.model.weights_init(weights_pre_exp, bias_pre_exp)
+                        else:
+                            self.strategy.model = ModelWithTemperature(self.strategy.model, self.device, self.num_bins)
+                            if experience_tr.current_experience > 0:
+                                self.strategy.model.temperature_init(temperature_pre_exp)
 
                         experience_val_data = make_classification_dataset(experience_val.dataset)
                         if buffer_val and self.pp_cal_mixed_data:
@@ -210,5 +216,13 @@ class Continual_Calibration:
                         self.strategy.model.state_dict(),
                         f"{self.log_dir}/model_{self.strategy_name}_{self.calibration_mode_str}_exp{experience_tr.current_experience}.pt"
                     )
+
+                    if self.pp_calibration_mode:
+                        if self.pp_cal_vector_scaling or self.pp_cal_matrix_scaling:
+                            weights_pre_exp = self.strategy.model.weights
+                            bias_pre_exp = self.strategy.model.bias
+                        else:
+                            temperature_pre_exp = self.strategy.model.temperature
+                        self.strategy.model = copy.deepcopy(self.strategy.model.model)
 
             return results

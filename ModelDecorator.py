@@ -38,6 +38,10 @@ class ModelWithTemperature(nn.Module):
         temperature = self.temperature.unsqueeze(1).expand(logits.size(0), logits.size(1)).to(self.device)
         return logits / temperature
 
+    def temperature_init(self, temperature):
+        print("@@@@@@@@@__temperature_init__",temperature.data)
+        self.temperature.data.copy_(temperature.data)
+
     def calibrate(self, lrpp, max_iter, experience_val):
         """
         Tune the temperature of the model (using the validation set).
@@ -104,6 +108,11 @@ class MatrixAndVectorScaling(nn.Module):
     def forward(self, input):
         logits = self.model(input)
         return self.linear(logits)
+
+    def weights_init(self, weights, bias):
+        print("@@@@@@@@@__weights_init__", weights.data, bias.data)
+        self.weights.data.copy_(weights.data)
+        self.bias.data.copy_(bias.data)
 
     def calibrate(self, lrpp, max_iter, experience_val):
         self.model.eval()
