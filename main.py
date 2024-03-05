@@ -7,7 +7,7 @@ import torch.nn as nn
 from torch.optim import SGD, Adam, AdamW
 from torch.optim.lr_scheduler import MultiStepLR
 from torch.nn import CrossEntropyLoss
-from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts, MultiStepLR
 from torchvision import transforms, models
 from torchvision.datasets import EuroSAT
 from torchvision.transforms import ToTensor
@@ -225,7 +225,7 @@ if __name__ == "__main__":
         num_classes = 100
         # model = resnet18(num_classes)
         # model_name = "ResNet18"
-        milestones=[60]
+        milestones=[60, 120, 160]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -243,15 +243,16 @@ if __name__ == "__main__":
             # seed=1234,
             # fixed_class_order=[i for i in range(10)],
         )
-        # model = models.resnet50()
-        # num_ftrs = model.fc.in_features
-        # model.fc = nn.Linear(num_ftrs, 10)
-        # model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
-        # model_name = "ResNet50"
+        model = models.resnet50()
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, 10)
+        model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
+        model_name = "ResNet50"
         num_classes = 10
-        model = resnet18(num_classes)
-        model_name = "ResNet18"
-        milestones=[35, 45]
+        milestones = [50,75,90]
+        # model = resnet18(num_classes)
+        # model_name = "ResNet18"
+        # milestones=[35, 45]
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
@@ -278,14 +279,21 @@ if __name__ == "__main__":
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
     
-    if args.dataset_name == "Atari": optimizer = Adam(model.parameters(), lr=args.learning_rate)
-    else: optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
+    if args.dataset_name == "Atari":
+         optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    elif args.dataset_name in ["SplitCIFAR100", "EuroSAT"]:
+        optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=5e-4)
+    else:
+        optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
     
     if milestones:
-        sched = LRSchedulerPlugin(
-                    MultiStepLR(optimizer, milestones=milestones, gamma=0.1) #learning rate decay
+        if args.dataset_name in ["SplitCIFAR100", "EuroSAT"]:
+            sched = LRSchedulerPlugin(CosineAnnealingWarmRestarts(optimizer, T_0=args.T0, T_mult=1, eta_min=1e-5))
+        else:
+            sched = LRSchedulerPlugin(
+                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
                 )
-        plugins.append(sched)
+    plugins.append(sched)
 
     ent_weight = args.ent_weight
     if args.early_stopping:
