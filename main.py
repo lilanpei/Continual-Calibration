@@ -219,12 +219,12 @@ if __name__ == "__main__":
         batch_size_mem = None
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
-        # model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
-        # model_name = "ResNet110"
+        model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
+        model_name = "ResNet110"
         num_classes = 100
-        model = resnet18(num_classes)
-        model_name = "ResNet18"
-        milestones=[35, 45]
+        # model = resnet18(num_classes)
+        # model_name = "ResNet18"
+        milestones=[60]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -276,8 +276,10 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    # optimizer = Adam(model.parameters(), lr=args.learning_rate)
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
+    
+    if args.dataset_name == "Atari": optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    else: optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
+    
     if milestones:
         sched = LRSchedulerPlugin(
                     MultiStepLR(optimizer, milestones=milestones, gamma=0.1) #learning rate decay
