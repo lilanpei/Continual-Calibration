@@ -69,7 +69,7 @@ class AtariDataset(Dataset):
         return self.data[attr][idx - self.stack_size + 1: idx + 1, ...]
 
 
-def generate_atari_benchmark(n_experinces, data_idx=1, ckp_idx=49, dataset_size=700000, seed=1):
+def generate_atari_benchmark(n_experinces, data_idx=1, ckp_idx=49, dataset_size=200000, seed=1):
     # default ckp_idx 49 - last one from training (https://github.com/google-research/batch_rl/issues/33)
 
     # sorted wrt performance in https://daiwk.github.io/assets/dqn.pdf

@@ -1,17 +1,18 @@
-import os
+# import os
 import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import SGD, Adam
 import torch.nn as nn
-from torch.nn import CrossEntropyLoss
+from torch.optim import SGD, Adam, AdamW
 from torch.optim.lr_scheduler import MultiStepLR
+from torch.nn import CrossEntropyLoss
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torchvision import transforms, models
 from torchvision.datasets import EuroSAT
 from torchvision.transforms import ToTensor
 from avalanche.benchmarks import nc_benchmark
-from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
+from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100, SplitTinyImageNet
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
@@ -24,6 +25,7 @@ from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
 from atari_dataset import generate_atari_benchmark
 from DQN_model import DQNModel
+from ResNet18 import resnet18
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -84,11 +86,11 @@ if __name__ == "__main__":
         help="max iteration for post processing calibration",
     )
     parser.add_argument(
-        "-m",
-        "--momentum",
-        type=float,
-        default=0.9,
-        help="momentum",
+        "-t0",
+        "--T0",
+        type=int,
+        default=3,
+        help="Number of iterations for the first restart of CosineAnnealingWarmRestarts lr_scheduler",
     )
     parser.add_argument(
         "-ew",
@@ -187,18 +189,43 @@ if __name__ == "__main__":
         default="1",
         help="run version",
     )
+    parser.add_argument(
+        "-bsm",
+        "--batch_size_mem",
+        help="Size of the batch sampled from the DER buffer",
+        default=None
+    )
+    parser.add_argument(
+        "-a",
+        "--alpha",
+        help="DER hyperparameter weighting the MSE loss",
+        type=float,
+        default=0.1
+    )
+    parser.add_argument(
+        "-b",
+        "--beta",
+        help="DER hyperparameter weighting the CE loss",
+        type=float,
+        default=0.5
+    )
 
     args = parser.parse_args()
     th.set_num_threads(1)
     plugins = []
-    milestones = None
 
+    if args.batch_size_mem:
+        batch_size_mem = int(args.batch_size_mem)
+    else:
+        batch_size_mem = None
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
-        milestones=[60, 120, 160]
         model_name = "ResNet110"
         num_classes = 100
+        # model = resnet18(num_classes)
+        # model_name = "ResNet18"
+        milestones=[60]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
@@ -213,26 +240,36 @@ if __name__ == "__main__":
             eurosat_test,
             5,
             task_labels=False,
-            seed=1234,
-            fixed_class_order=[i for i in range(10)],
+            # seed=1234,
+            # fixed_class_order=[i for i in range(10)],
         )
-        model = models.resnet50()
-        num_ftrs = model.fc.in_features
-        model.fc = nn.Linear(num_ftrs, 10)
-        model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
-        # milestones = [50,75,90]
-        model_name = "ResNet50"
+        # model = models.resnet50()
+        # num_ftrs = model.fc.in_features
+        # model.fc = nn.Linear(num_ftrs, 10)
+        # model.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding = 3, bias = False)
+        # model_name = "ResNet50"
         num_classes = 10
+        model = resnet18(num_classes)
+        model_name = "ResNet18"
+        milestones=[35, 45]
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
         model_name = "NatureDQNNetwork"
         num_classes = 18
+        milestones = None
+    elif args.dataset_name == "TinyImageNet":
+        benchmark = SplitTinyImageNet(n_experiences=10)
+        num_classes = 200
+        model = resnet18(num_classes)
+        model_name = "ResNet18"
+        milestones = None
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
         num_classes = 10
+        milestones = None
 
     foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
@@ -240,12 +277,16 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    
+    if args.dataset_name == "Atari": optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    else: optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
+    
     if milestones:
         sched = LRSchedulerPlugin(
-                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+                    MultiStepLR(optimizer, milestones=milestones, gamma=0.1) #learning rate decay
                 )
         plugins.append(sched)
+
     ent_weight = args.ent_weight
     if args.early_stopping:
         early_stopping = EarlyStoppingPlugin(patience=args.patience, val_stream_name='valid_stream')
@@ -287,7 +328,7 @@ if __name__ == "__main__":
             calibration_mode = calibration_mode + "_MixedData"
     else:
         calibration_mode = calibration_mode + "_" + "NoPostProcessing"
-    
+
     calibration_mode += args.version
 
     # log to Tensorboard
@@ -304,7 +345,7 @@ if __name__ == "__main__":
         loggers=[interactive_logger, text_logger, tb_logger]
     )
 
-    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, pp_cal_vector_scaling, pp_cal_matrix_scaling, calibration_mode, num_classes, args.learning_rate_for_ppcm, args.max_iter, args.num_bins, args.logdir)
+    continual_calibration = Continual_Calibration(tb_logger, model, optimizer, plugins, criterion, strategy_name, bm, train_mb_size, train_epochs, mem_size, eval_mb_size, eval_plugin, device, pp_calibration_mode, pp_cal_mixed_data, pp_cal_vector_scaling, pp_cal_matrix_scaling, calibration_mode, num_classes, args.learning_rate_for_ppcm, args.max_iter, args.num_bins, batch_size_mem, args.alpha, args.beta, args.logdir)
     res = continual_calibration.train()
 
     with open(f"{args.logdir}/{args.dataset_name}_{model_name}_{strategy_name}_{calibration_mode}_dict", "wb") as file:
