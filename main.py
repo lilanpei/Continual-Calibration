@@ -186,6 +186,7 @@ if __name__ == "__main__":
         "-v",
         "--version",
         type=str,
+        default="1",
         help="run version",
     )
     parser.add_argument(
