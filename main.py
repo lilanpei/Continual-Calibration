@@ -293,7 +293,7 @@ if __name__ == "__main__":
             sched = LRSchedulerPlugin(
                     MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
                 )
-    plugins.append(sched)
+        plugins.append(sched)
 
     ent_weight = args.ent_weight
     if args.early_stopping:
