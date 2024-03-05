@@ -20,6 +20,9 @@ class ModelWithTemperature(nn.Module):
     def __init__(self, model, device, num_bins):
         super(ModelWithTemperature, self).__init__()
         self.model = copy.deepcopy(model)
+        if self.model:
+            for param in self.model.parameters():
+                param.requires_grad = False
         self.device = device
         self.num_bins = num_bins
         # self.model.eval()

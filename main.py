@@ -3,15 +3,16 @@ import ssl
 import argparse
 import torch as th
 import pickle
-from torch.optim import AdamW, Adam, SGD
 import torch.nn as nn
+from torch.optim import SGD, Adam, AdamW
+from torch.optim.lr_scheduler import MultiStepLR
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts, MultiStepLR
 from torchvision import transforms, models
 from torchvision.datasets import EuroSAT
 from torchvision.transforms import ToTensor
 from avalanche.benchmarks import nc_benchmark
-from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100
+from avalanche.benchmarks.classic import SplitMNIST, SplitCIFAR100, SplitTinyImageNet
 from avalanche.evaluation.metrics import accuracy_metrics
 from avalanche.models import SimpleMLP, pytorchcv_wrapper
 from avalanche.logging import InteractiveLogger, TextLogger, TensorboardLogger
@@ -24,6 +25,7 @@ from ECE_metrics import ExperienceECE, ExpECEHistogram
 from Ent_Loss import Ent_Loss
 from atari_dataset import generate_atari_benchmark
 from DQN_model import DQNModel
+from ResNet18 import resnet18
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -184,6 +186,7 @@ if __name__ == "__main__":
         "-v",
         "--version",
         type=str,
+        default="1",
         help="run version",
     )
     parser.add_argument(
@@ -220,6 +223,8 @@ if __name__ == "__main__":
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         model_name = "ResNet110"
         num_classes = 100
+        # model = resnet18(num_classes)
+        # model_name = "ResNet18"
         milestones=[60, 120, 160]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
@@ -245,15 +250,27 @@ if __name__ == "__main__":
         model_name = "ResNet50"
         num_classes = 10
         milestones = [50,75,90]
+        # model = resnet18(num_classes)
+        # model_name = "ResNet18"
+        # milestones=[35, 45]
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)
         model_name = "NatureDQNNetwork"
+        num_classes = 18
+        milestones = None
+    elif args.dataset_name == "TinyImageNet":
+        benchmark = SplitTinyImageNet(n_experiences=10)
+        num_classes = 200
+        model = resnet18(num_classes)
+        model_name = "ResNet18"
+        milestones = None
     else:
         benchmark = SplitMNIST(n_experiences=5)
         model = SimpleMLP(num_classes=benchmark.n_classes)
         model_name = "SimpleMLP"
         num_classes = 10
+        milestones = None
 
     foo = lambda exp: class_balanced_split_strategy(args.validation_split, exp)
     bm = benchmark_with_validation_stream(benchmark, custom_split_strategy=foo)
@@ -261,14 +278,21 @@ if __name__ == "__main__":
     train_mb_size = args.train_mb_size
     train_epochs = args.train_epochs
     eval_mb_size = args.eval_mb_size
-    # optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=5e-4)
-
-    # sched = LRSchedulerPlugin(CosineAnnealingWarmRestarts(optimizer, T_0=args.T0, T_mult=1, eta_min=1e-5))
-    optimizer = SGD(model.parameters(), lr=args.learning_rate, momentum=0.9, weight_decay=5e-4)
-    sched = LRSchedulerPlugin(
-                # MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.2) #learning rate decay
-                MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
-            )
+    
+    if args.dataset_name == "Atari":
+         optimizer = Adam(model.parameters(), lr=args.learning_rate)
+    elif args.dataset_name in ["SplitCIFAR100", "EuroSAT"]:
+        optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=5e-4)
+    else:
+        optimizer = SGD(model.parameters(), lr=args.learning_rate, weight_decay=0, momentum=0)
+    
+    if milestones:
+        if args.dataset_name in ["SplitCIFAR100", "EuroSAT"]:
+            sched = LRSchedulerPlugin(CosineAnnealingWarmRestarts(optimizer, T_0=args.T0, T_mult=1, eta_min=1e-5))
+        else:
+            sched = LRSchedulerPlugin(
+                    MultiStepLR(optimizer, milestones=milestones, gamma=0.2) #learning rate decay
+                )
     plugins.append(sched)
 
     ent_weight = args.ent_weight
