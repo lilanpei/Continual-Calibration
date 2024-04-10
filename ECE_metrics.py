@@ -1,11 +1,11 @@
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
 from avalanche.evaluation import Metric
 from collections import OrderedDict
 from avalanche.evaluation import GenericPluginMetric, PluginMetric
-import torch
-import numpy as np
 from avalanche.evaluation.metric_results import MetricValue
 from avalanche.evaluation.metric_utils import get_metric_name
-import matplotlib.pyplot as plt
 
 
 class ECE(Metric[float]):

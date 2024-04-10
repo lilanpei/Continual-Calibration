@@ -218,19 +218,17 @@ if __name__ == "__main__":
         batch_size_mem = int(args.batch_size_mem)
     else:
         batch_size_mem = None
+
     if args.dataset_name == "SplitCIFAR100":
         benchmark = SplitCIFAR100(n_experiences=10)
         model = pytorchcv_wrapper.resnet("cifar100", depth=110, pretrained=False)
         model_name = "ResNet110"
         num_classes = 100
-        # model = resnet18(num_classes)
-        # model_name = "ResNet18"
         milestones=[60, 120, 160]
     elif args.dataset_name == "EuroSAT":
         # --- TRANSFORMATIONS
         transform = transforms.Compose([ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
         # --- BENCHMARK CREATION
-        # root = os.path.join(root, SUBDIR)
         ssl._create_default_https_context = ssl._create_unverified_context
         dataset = EuroSAT(root=".", transform=transform, download=True)
         n = int(len(dataset) * 0.9)
@@ -239,9 +237,7 @@ if __name__ == "__main__":
             eurosat_train,
             eurosat_test,
             5,
-            task_labels=False,
-            # seed=1234,
-            # fixed_class_order=[i for i in range(10)],
+            task_labels=False
         )
         model = models.resnet50()
         num_ftrs = model.fc.in_features
@@ -250,9 +246,6 @@ if __name__ == "__main__":
         model_name = "ResNet50"
         num_classes = 10
         milestones = [50,75,90]
-        # model = resnet18(num_classes)
-        # model_name = "ResNet18"
-        # milestones=[35, 45]
     elif args.dataset_name == "Atari":
         benchmark = generate_atari_benchmark(n_experinces=5)
         model = DQNModel(num_actions=18)

@@ -3,16 +3,12 @@ Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger
 On Calibration of Modern Neural Networks.
 Adapted from: https://github.com/gpleiss/temperature_scaling
 """
-import copy
 import torch as th
-from torch import nn
-from torch.nn import functional as F
+import numpy as np
 from avalanche.training.supervised import Naive, JointTraining, Replay, DER
 from avalanche.benchmarks.utils import make_classification_dataset, AvalancheDataset, AvalancheConcatDataset, AvalancheSubset
-from avalanche.benchmarks.utils.data_attribute import ConstantSequence
 from ModelDecorator import ModelWithTemperature, MatrixAndVectorScaling
 from typing import Iterable
-import numpy as np
 
 
 class Continual_Calibration:

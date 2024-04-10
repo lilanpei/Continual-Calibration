@@ -2,6 +2,7 @@
 logs/
 eurosat/
 datasets/
+notebooks/
 __pycache__/
 imgs/
 .DS_Store

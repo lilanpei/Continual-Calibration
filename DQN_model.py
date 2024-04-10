@@ -1,7 +1,6 @@
 import torch as th
 import torch.nn as nn
 import numpy as np
-
 from avalanche.models.base_model import BaseModel
 
 class DQNModel(nn.Module, BaseModel):
