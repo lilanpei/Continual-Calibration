@@ -4,6 +4,9 @@
 
 This repository provides code for the experiments done in the paper [Calibration of Continual Learning Models](https://arxiv.org/abs/2404.07817). 
 
+## About
+This repository presents the first empirical study of calibration approaches in CL, demonstrating that CL strategies do not inherently produce calibrated models. To address this issue, we propose a continual calibration approach that enhances the performance of post-processing calibration methods across various benchmarks and CL strategies. While CL does not necessarily require perfect predictive models, it can benefit from reliable ones. We believe our study on continual calibration represents a crucial step in this direction.
+
 ## Citation
 ```
 @misc{liCalibrationContinualLearning2024,
