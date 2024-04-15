@@ -1,7 +1,6 @@
 import torch as th
 import numpy as np
 import gzip
-
 from torch.utils.data import Dataset, random_split
 from avalanche.benchmarks.generators import dataset_benchmark
 
@@ -19,7 +18,6 @@ class AtariDataset(Dataset):
         self.stack_size = stack_size
 
         self.data = self.__load_data()
-        # print("Loaded data - checking elements")
 
         self.actual_size = 0
         self.obs = []
@@ -43,7 +41,6 @@ class AtariDataset(Dataset):
             data_idxs = np.random.randint(0, self.__dataset_max_size, size=self.size)
         else:
             data_idxs = range(self.__dataset_max_size)
-        # print("data_idxs:", data_idxs)
         data = {}
         for attr in self.__attributes:
             filename = f'{data_dir}{self.__store_prefix}{attr}_ckpt.{self.ckp_idx}.gz'
@@ -72,7 +69,7 @@ class AtariDataset(Dataset):
 def generate_atari_benchmark(n_experinces, data_idx=1, ckp_idx=49, dataset_size=200000, seed=1):
     # default ckp_idx 49 - last one from training (https://github.com/google-research/batch_rl/issues/33)
 
-    # sorted wrt performance in https://daiwk.github.io/assets/dqn.pdf
+    # sorted wrt performance in `Human-level control through deep reinforcement learning`
     GAMES_AVAILABLE = ['VideoPinball', 'Boxing', 'Breakout', 'StarGunner', 'Atlantis']
     
     assert(n_experinces <= len(GAMES_AVAILABLE))

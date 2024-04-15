@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch.nn.functional import avg_pool2d, relu
 from typing import List
 
-# https://github.com/aimagelab/mammoth/blob/master/backbone/ResNet18.py
+# code: https://github.com/aimagelab/mammoth/blob/master/backbone/ResNet18.py
 
 def conv3x3(in_planes: int, out_planes: int, stride: int=1) -> F.conv2d:
     """
