@@ -40,7 +40,8 @@ This repository presents the first empirical study of calibration approaches in 
  ┣ 📜README.md
  ┣ 📜ResNet18.py
  ┣ 📜atari_dataset.py
- ┗ 📜main.py
+ ┣ 📜main.py
+ ┗ 📜environment.yml
 ```
 
 ## Getting Started
